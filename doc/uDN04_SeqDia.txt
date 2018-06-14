@@ -1,0 +1,107 @@
+/** \page uDN04_SeqDia DesNote04: Sequence Diagram
+
+Here's a top-down module-level sequence diagram,
+or at least like a sequence diagram.
+
+The first shows what happens when your app makes an API call.
+The second shows what happens when your explicit interrupt handler occurs.
+
+This'll give you an idea who is calling what.
+
+\code
+/*
+
+|- YourApp makes an API call
+
+   |- trAPI
+
+      -- packs parameters into a kernel interface data structure
+      -- that's on the caller's stack
+      -- everybody operates on a pointer to it.
+      
+      |- trKIDS
+      
+         -- this will be used damned near everywhere
+         -- figure out which kernel handler to use
+      
+         |- trKhf
+      
+      -- decide how to enter the tr task itself
+      
+         |- trTti_enter
+      
+         -- effect a context switch or call direct
+         -- trap using
+         
+            |- truPACM4
+      
+      |- trTti
+      
+         -- Use the kernel handler
+
+            |- trEvt
+            |- trMsg
+            |- trStrm
+            |- trT
+            
+               -- Every one of those will reference task info
+               
+               |- trTi
+               
+               -- Each uses it's own private handlers
+               
+                  |- trEvtP
+                  |- trMsgP
+                  |- trStrmP
+                  |- trTP
+                  
+                  -- Every one of the private handlers is trapped using
+               
+                     |- trKIDS
+                     |- trKhf
+                     |- truPACM4
+      
+                  -- Every one of the private handlers will modify context state
+                   
+                     |- trSR
+                     |- trTS
+                     |- trTstc
+               
+         -- Decide how to leave the kernel
+         
+            |- trTti_leave
+         
+            -- trap using
+         
+               |- truPACM4
+               
+      -- Transition back to the API.
+         
+   -- Return the result to the caller.
+
+|- YourApp takes an interrupt
+
+   |- trTei_enter
+
+      -- Figure out what task has been interrupted.
+      -- Figure out if this is the first interrupt or a nested interrupt
+      -- Set up everything for using trAPI calls from an interrupt
+      
+   |- YourApp handles the interrupt
+      -- Can enable even more interrupts
+      -- Can make most, not all, trAPI calls
+
+   |- trTei_leave
+   
+      -- Clean up after trAPI calls
+      -- Figure out if this is the last interrupt or we're still nested
+      -- On the last nesting, figure out what task to start
+      
+|- YourApp gets control, but another task may be take-charge.
+   
+*/
+\endcode
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

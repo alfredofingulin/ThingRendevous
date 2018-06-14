@@ -1,0 +1,68 @@
+/** \page Spec00_FeatExpecMem Spec00: Features, Expectations, and Memory
+
+Tr is a kernel for bare-machine embedded systems.
+These execute from ROM, are RAM-limited, and avoid initialized data.
+
+\section Spec00_Feat Features or What Tr Does and Doesn't Do
+
+\code
+/*
+  Does Do                       |  Doesn't Do
+--------------------------------+---------------------------------
+o Pre-emptive task scheduling   | o Kernel-level networking
+o Multiple tasks, each with     | o File systems
+  it's own stack                | o Executable load/unload
+o Interrupts.                   | o Memory reference fix-up.
+o Intertask communications      |
+  - streams of bytes,           | Networking and file systems
+    always FIFO                 | are bolt-ons separate from Tr.
+  - fixed length messages,      |
+    priority or FIFO            |
+  - short events,               |
+    always priority             |
+--------------------------------+---------------------------------
+*/
+\endcode
+
+\section Spec00_Expec Expectations
+
+One timer generating a system clock tick:
+
+\li you supply the timer interrupt handler
+\li your interrupt handler manages the timer hardware
+\li your handler calls Tr's system clock tick function.
+
+You implement good ol' function main():
+
+\li performs any hardware initialization
+\li passes control to Tr's start function.
+
+Tr's start function expects several globals resolved at build-time.
+
+\li The globals elaborate all tasks and stacks, and their streams, messages, and events.
+\li These globals are built by a Tr-supplied tool.
+\li The tool is written in Python.
+\li It scans your application for keywords and data, generating a .c file to satisfy Tr's expectations.
+
+\section Spec00_Mem Memory Usage
+
+For a simple STM32F429 Nucleo 144 board with 
+
+\li three simple tasks, each with generous 1k stacks
+\li interrupts
+\li a whole lot of unused hardware drivers
+\li the usual C library and start up code support, including standard out using printf
+
+memory used is:
+
+\li less than 64k FLASH
+\li less than 8k RAM.
+
+Note that Tr never uses:
+
+\li .heap
+\li .data.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

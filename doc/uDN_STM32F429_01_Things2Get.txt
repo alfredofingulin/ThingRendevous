@@ -1,0 +1,31 @@
+/** \page uDN_STM32F429_01_Things2Get DesNote/STM32F4xx 01: Things To Get
+
+You'll need the 
+\htmlonly <a href="http://www.st.com/en/embedded-software/stm32cubef4.html">STM32CubeF4 firmware package (get it here)</a> \endhtmlonly
+and nearly every ST Micro app note you can get for the STM32F429.
+
+A .zip file, en.stm32cubefw.zip, 
+
+\li contains 1.14.0 firmware as received from ST Micro
+\li is included without modification in this distribution
+\li was used to develop and test ThingRendevous on the board
+\li there's surely a later version at the website above.
+
+The hardware configurator is also included in en.stm32cubemx.zip.
+
+The app notes are not included, but here's a filename to app note xref:
+
+\li DM00103145.pdf: UM1709: STM32Cube Ethernet IAP example
+\li DM00103685.pdf: UM1713: Developing applications on STM32Cube with LwIP TCP/IP stack
+\li DM00105256.pdf: UM1720: STM32Cube USB host library
+\li DM00105259.pdf: UM1721: Developing Applications on STM32Cube with FatFs
+\li DM00105262.pdf: UM1722: Developing Applications on STM32Cube with RTOS
+\li DM00105446.pdf: UM1723: STM32CubeF4 PolarSSL example
+\li DM00105879.pdf: UM1725: Description of STM32F4xx HAL drivers
+\li DM00107720.pdf: UM1730: Getting started with STM32CubeF4 firmware package for STM32F4xx series
+\li DM00108129.pdf: UM1734: STM32Cube USB Device library
+\li DM00112348.pdf: UM1743: STM32CubeF4 demonstration platform
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

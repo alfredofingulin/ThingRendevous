@@ -1,0 +1,179 @@
+/** \page uDN03_TaskInfoERD DesNote03: Task Info ERD
+
+Well... it's ERD-like.
+
+\code
+/*
+
+trSR/
+   -- system State Registers
+   
+   |- Flags
+      -- bits detailing present operations
+   
+   |- RunningTask
+      -- index to the currently executing task
+      
+   |- ReadyTasks
+   |- TimeoutTasks
+      -- root to the priority linked list of tasks 
+         either ready-to-run or on a timeout
+      -- details are in trTi
+
+trTi/
+   -- Task information
+
+   |- NumOfTasks
+      -- constant
+   |- NumOfTasks_PlusOne
+      -- constant
+   
+   |- TaskReadyResrc
+      -- pre-allocated priority elements
+      -- one for each task; found by task index
+      -- used in task lists
+   |- TaskTimeout; pre-allocated priority elements for task timeout lists
+      -- pre-allocated priority elements
+      -- one for each task; found by task index
+      -- used in timeout lists
+
+   |- TaskIDTree
+      -- constant b-tree by IDs
+      -- one entry available for each task
+      -- search by ID; index returned used to access everything internal
+      
+   |- TaskInfoList
+      -- constant list
+      -- one for each task; found by task index
+      
+      |- t
+         -- Always non-NULL
+         
+         trTP/
+         
+            |- ci
+               -- constant configuration info
+               
+               |- someTask
+                  -- constant where the goddamned executable is
+               |- theTaskData
+                  -- constant where the task's data is (for this instance)
+               
+               |- cb
+                  -- control block
+                  
+                  |- task_state
+                  |- priority_offset
+                  |- task_delay_remaining
+               
+               |- sb
+                  -- stack block
+                  |- just an array of bytes
+               |- StackSize
+                  -- constant in bytes
+                  
+               |- NominalPriority
+                                 
+      |- evt
+         -- If the task has event, will be non-NULL.
+         
+         trEvtP/
+         
+            |- ci
+               -- constant configuration info
+               
+               |- EvtLen
+                  -- constant number of events possible
+               
+               |- cb
+                  -- control block
+                  
+                  |- len_used
+                  |- root_ele
+                     -- Where the priority list begins/ends.
+               
+               |- db
+                  -- data block of EvtLen
+                  
+                  |- source_ID
+                  |- flags
+                  |- evt itself
+
+               |- pl
+                  -- trPl priority elements of EvtLen; 
+                  -- priority correlates to index into event queue
+
+      |- msg
+         -- If the task has message, will be non-NULL.
+         
+         trMsgP/
+         
+            |- ci
+               -- constant configuration info
+               
+               |- MsgLen
+                  -- constant number of messages possible
+               |- MsgOrdering
+                  -- really a configuration word
+                  -- 0 FIFI, 1 priority
+               |- MsgPayload
+                  -- 8, 16, 24, or 32 bytes
+               
+               |- cb
+                  -- control block
+                  
+                  |- len_used
+                  
+                  |- offset_pend
+                  |- offset_post
+                     -- On FIFO event queues, where the next pend/post will occur.
+                     
+                  |- root_ele
+                     -- On priority queues, where the priority list begins/ends.
+               
+               |- db
+                  -- data block of MsgLen
+                  |- source_ID
+                  |- flags
+               
+               |- py
+                  -- MsgLen * MsgPayload bytes of data
+                  -- find the payload data at [message index * MsgPayload]
+                  -- the data runs for MsgPayload bytes
+                  |- just an array of bytes
+                  
+               |- pl
+                  -- FIFO is NULL, priority is non-NULL.
+                  -- trPl priority elements of MsgLen; 
+                  
+      |- strm
+         -- If the task has streams, will be non-NULL.
+         
+         trStrmP/
+         
+            |- ci
+               -- constant configuration info
+               
+               |- StrmLen
+                  -- constant stream length in bytes
+               
+               |- cb
+                  -- control block
+                  
+                  |- len_used
+                  |- offset_read
+                  |- offset_writ
+               
+               |- db
+                  -- data block of StrmLen
+                  |- just an array of bytes
+
+   |- Tti_ID, Tti_idx, Tei_ID, Tei_idx
+      -- constants for Tr Task Itself and Tr Explicit Interrupt task
+         
+*/
+\endcode
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

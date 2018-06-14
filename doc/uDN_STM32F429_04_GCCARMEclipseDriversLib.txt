@@ -1,0 +1,325 @@
+/** \page uDN_STM32F429_04_GCCARMEclipseDriversLib DesNote/STM32F4xx 04: Eclipse and GCC ARM: Drivers Static Lib
+
+If you read Documentation/STM32429ZI-Nucleo/STM32CubeF4GettingStarted.pdf
+you'll notice something:
+
+\li Drivers and Middleware source code is used directly by the application.
+\li Template files are copied, renamed, and modified by the application.
+
+Ideally:
+
+\li We avoid that.
+\li Select only the components we need.
+\li Configure a project, compile, and create a Drivers and such static library.
+\li Manage that configuration.
+
+Here's how to create that Drivers and such library.
+
+~~ 1.  Use Eclipse to create a static archive library.
+
+Call it F429 or something like that.  
+You know how to do this, 'cause you did it to create Tr.
+
+And do everything you did to create the Tr static lib too.
+
+~~ 2.  From the vendor's firmware package, import the Drivers directories.
+
+We pick-up a subset of directories using the existing directory structure.  
+Use .h, .c, .s, and .ld files.
+You can skip all .txt, .html, .chm documentation files.
+
+Here are the directories.  If it's not listed, you don't need it.
+
+\code
+/*
+|-F429
+|  |-Drivers
+|  |  |-BSP
+|  |  |  |-Components  .h .c from the following subdirectories
+|  |  |  |  |-st7735
+|  |  |  |  |-mfxstm32l152
+|  |  |  |  |-lis302dl
+|  |  |  |  |-ampire640480
+|  |  |  |  |-ili9341
+|  |  |  |  |-exc7200
+|  |  |  |  |-wm8994
+|  |  |  |  |-otm8009a
+|  |  |  |  |-Common
+|  |  |  |  |-s25fl512s
+|  |  |  |  |-st7789h2
+|  |  |  |  |-cs43l22
+|  |  |  |  |-ts3510
+|  |  |  |  |-n25q128a
+|  |  |  |  |-ft6x06
+|  |  |  |  |-ampire480272
+|  |  |  |  |-lsm303dlhc
+|  |  |  |  |-n25q512a
+|  |  |  |  |-lis3dsh
+|  |  |  |  |-stmpe811
+|  |  |  |  |-l3gd20
+|  |  |  |  |-ov2640
+|  |  |  |  |-stmpe1600
+|  |  |  |  |-s5k5cag
+|  |  |  |  |-n25q256a
+|  |  |  |  |-ili9325
+|  |  |  |  |-ls016b8uy
+|  |  |  |-STM32F4xx_Nucleo_144  .h .c
+|  |  |-CMSIS
+|  |  |  |-Include  .h
+|  |  |  |-Device
+|  |  |  |  |-ST
+|  |  |  |  |  |-STM32F4xx
+|  |  |  |  |  |  |-Include  .h
+|  |  |  |  |  |  |-Source
+|  |  |  |  |  |  |  |-Templates
+|  |  |  |  |  |  |  |   - system_stm32f4xx.c
+|  |  |  |  |  |  |  |   |- you don't need the arm, gcc, or other subdirectories
+|  |  |-STM32F4xx_HAL_Driver
+|  |  |  |-Src  .h .c
+|  |  |  |-Inc  .h
+|  |  |  |  |-Legacy
+*/
+\endcode
+
+Aside: these items may come back at a future date.  Skip 'em for now.
+
+\code
+/*
+|-F429
+|  |-Drivers
+|  |  |-BSP
+|  |  |  |-Adafruit_Shield  Don't use just yet; depends on Utilities fonts.
+|  |  |-CMSIS
+|  |  |  |-DSP_Lib  Don't use just yet; for DSP development.
+*/
+\endcode
+
+~~ 3.  Decide whether you're building a bare-machine app or a Tr-based app.
+
+If bare-machine, you'll use the the Goodies components.  
+If Tr-based, you'll used the trDrivers components.
+
+~~ 4.  As part of ThingRendevous, import either directory Goodies or trDrivers, but not both.
+
+Pick up everything in the directory using the existing directory structure.  
+
+Why do this?  To come up with a configuration-controllable library
+for either bare-machine (Goodies) or Tr-apps (trDrivers).
+
+~~ 5.  Don't build the library just yet.
+
+~~ 6.  You may or may not want to copy and modify the system start code, system_stm32f4xx.c
+
+This code is called during startup and before main.
+It does a whole lot of set up.
+It's not likely you'll modify it, but you just may.
+
+~~ 6.1.  Goodies/trDrivers already had system start code system_stm32f4xx.c
+
+This should be good for your use.
+It as been modified for this board.
+
+~~ 6.2.  Copying and modifying the system start code means doing the following.
+
+\code
+/*
+Copy
+
+|-F429
+|  |-Drivers
+|  |  |-CMSIS
+|  |  |  |-Device
+|  |  |  |  |-ST
+|  |  |  |  |  |-STM32F4xx
+|  |  |  |  |  |  |-Source
+|  |  |  |  |  |  |  |-Templates
+|  |  |  |  |  |  |  |   - system_stm32f4xx.c
+
+to a temporary spot.  Then, import system_stm32f4xx.c into:
+
+|-F429
+|  |-Goodies -- or -- trDrivers
+|  |   - system_stm32f4xx.c
+
+*/
+\endcode
+
+You still need to exclude the one in Templates from the build.
+Use right-click/Exclude-from-build on the file in Templates.
+
+~~ 6.3.  It's not good to just blindly use the one in Templates.
+
+~~ 7.  You will modify the HAL interface config, stm32f4xx_hal_conf.h
+
+This is how you turn on & off various HAL components.
+
+~~ 7.1.  Goodies/trDrivers already has "virgin" HAL config stm32f4xx_hal_conf.h
+
+This is the one to modify for your library configuration.
+
+This is a mutant version.
+
+\li Nucleo has a different external ethernet MAC/PHY chip than all the other boards
+\li the Nucleo HAL interface defines this external ethernet MAC/PHY
+\li the "common template" HAL interface uses the other external ethernet MAC/PHY
+\li the Nucleo HAL interface is missing some useful preprocessor define details
+\li the "common template" HAL interface fixes those preprocessor issues.
+
+So:
+
+\li this stm32f4xx_hal_conf.h is mostly like the "common template" HAL interface
+\li zapped the "common template" external ethernet MAC/PHY
+\li added-back the Nucleo external ethernet MAC/PHY.
+
+~~ 7.2.  You still need to exclude the "common template" HAL from the build.
+
+\code
+/*                               
+|-F429
+|  |-Drivers
+|  |  |-STM32F4xx_HAL_Driver
+|  |  |  |-Inc
+|  |  |  |  - stm32f4xx_hal_conf_template.h
+*/
+\endcode
+
+Use right-click/Exclude-from-build on stm32f4xx_hal_conf_template.h file in it's original location.
+
+~~ 8.  You will likely modify the HAL inits, stm32f4xx_hal_msp.c
+
+If you modify the HAL config, you'll modify this.
+This code is called from main when HAL_Init is invoked.
+
+~~ 8.1.  Goodies/trDrivers already has a stm32f4xx_hal_msp.c
+
+This is the one to modify for your library configuration.
+
+It is already set-up with the LEDs and virtual UART comm port.
+
+~~ 8.2.  You still need to exclude the "common template" HAL from the build.
+
+\code
+/*
+|-F429
+|  |-Drivers
+|  |  |-STM32F4xx_HAL_Driver
+|  |  |  |-Src
+|  |  |  |  - stm32f4xx_hal_msp_template.c
+*/
+\endcode
+
+Use right-click/Exclude-from-build on stm32f4xx_hal_msp_template.c file in it's original location.
+
+~~ 9.  If you're modifying the RTC timebase, you'll need to copy and rename files; you have to exclude the templates no matter what.
+
+~~ 9.1.  Goodies/trDrivers do not have copies of these files.
+
+~~ 9.2.  What to copy & rename, and where...
+
+\code
+/*                               
+Copy
+
+|-F429
+|  |-Drivers
+|  |  |-STM32F4xx_HAL_Driver
+|  |  |  |-Src
+|  |  |  |  - stm32f4xx_hal_timebase_rtc_wakeup_template.c
+|  |  |  |  - stm32f4xx_hal_timebase_rtc_alarm_template.c
+|  |  |  |  - stm32f4xx_hal_timebase_tim_template.c
+
+to a temporary spot without the _template.
+Modify for your HAL configuration.
+Import into Goodies -- or -- trDrivers
+
+|-F429
+|  |-Goodies -- or -- trDrivers
+|  |  - stm32f4xx_hal_timebase_rtc_wakeup.c
+|  |  - stm32f4xx_hal_timebase_rtc_alarm.c
+|  |  - stm32f4xx_hal_timebase_tim.c
+
+*/
+\endcode
+
+~~ 9.3.  What to exclude from the build, no matter what...
+
+\code
+/*                               
+
+|-F429
+|  |-Drivers
+|  |  |-STM32F4xx_HAL_Driver
+|  |  |  |-Src
+|  |  |  |  - stm32f4xx_hal_timebase_rtc_wakeup_template.c
+|  |  |  |  - stm32f4xx_hal_timebase_rtc_alarm_template.c
+|  |  |  |  - stm32f4xx_hal_timebase_tim_template.c
+
+*/
+\endcode
+
+~~ 10.  Add include paths to the compiler and assembler options.
+
+These paths are used only to build this library.
+
+\code
+/*
+F429/Goodies -- or -- F429/trDrivers (and not both)
+F429/Drivers/CMSIS/Include
+F429/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+F429/Drivers/STM32F4xx_HAL_Driver/Inc
+F429/Drivers/BSP/STM32F4xx_Nucleo_144/
+tr/inc, only if you're using F429/trDrivers
+*/
+\endcode
+
+~~ 11.  Add preprocessor defines to the compiler and assembler options.
+
+\code
+/*
+STM32F429xx
+USE_HAL_DRIVER
+USE_STM32F4XX_NUCLEO_144
+*/
+\endcode
+
+~~ 12.  Use start-up code in startup_STM32F429ZI.sx.  
+Here's how to compile it.
+
+~~ 12.1.  Go read the header for startup_STM32F429ZI.sx right now.
+It explains how to set up Eclipse to correctly associate a .sx file.
+
+~~ 12.2.  Decide whether you're building bare-metal code, 
+retargeting standard IO on a bare-metal machine, 
+or writing real OO C++ code.
+
+That determines how startup_STM32F429ZI.sx is compiled.
+It also effects your application build.
+
+\li Bare-metal with no standard IO, C-only, and never C++?  See 12.2.1.
+\li Retargeting standard IO or using C++?  See 12.2.2.
+
+~~ 12.2.1.  Bare-metal doesn't need the usual C-lang crt*.o startup code.
+startup_STM32F429ZI.sx can do the job directly.  
+
+Add some defines to do this job.  
+
+\li Properties > C/C++ Build > Settings
+\li Tab Tool Settings > Cross GCC Compiler
+
+Choose Preprocessor, then add the following to Defined symbols (-D):
+
+\li __START=main
+\li __STARTUP_CLEAR_BSS
+
+~~ 12.2.2.  Retargeting or C++ demands crt*.o startup be used.
+startup_STM32F429ZI.sx will hand off control to this code.
+
+To do that:
+
+\li do nothing.
+
+~~ 13.  Now build the library.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

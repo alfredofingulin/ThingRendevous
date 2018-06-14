@@ -1,0 +1,52 @@
+/** \page uDN_STM32F429_08_StartUp DesNote/STM32F429 06: How The Board Starts Up
+
+It's not obvious how the ARM Cortex M4 start-up code works
+(if it's ARM, it's not obvious).
+
+This narrative may help.
+
+~~ 1.  ARM Cortex M4 retrieves the starting PC and stack from the interrupt vector table.
+
+That's obvious and per ARM.  
+
+The interrupt vector table is defined in startup_STM32F429ZI.sx.
+Note all the weak pre-defined handlers.
+To use an interrupt:
+
+\li define a C-language function with the same name
+\li add the interrupt attribute
+\li that function becomes the interrupt vector target.
+
+~~ 2.  startup_STM32F429ZI.sx, Reset_Handler gets control.
+
+...but the first thing it does is...
+
+~~ 3.  Reset_Handler does all the usual section inits/moves and so on.
+
+'Nuff said.
+
+~~ 4.  system_stm32f4xx.c, SystemInit() gets called.
+
+This is a lot about clock set-up.
+
+~~ 5.  __START gets invoked.
+
+Normally, that's crt0*.o _start.  Sometimes it's main().
+
+~~ 6.  Eventually your main() gets control.
+
+Not done yet.
+
+~~ 7.  Your main() needs to invoke HAL and other clock inits.
+
+At at minimum: 
+
+\li HAL_Init()
+\li SystemClock_Config() in F429_SystemClock_Config.c/h
+\li board support package items.
+
+~~ 8.  Now your main() can init and start Tr.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

@@ -1,0 +1,31 @@
+/** \page TN00_RecRead TechNote00: Recommended Reading: Real-Time Operating Systems
+
+\section TN00_Wikipedia Wikipedia
+
+\li \htmlonly <a href="http://en.wikipedia.org/wiki/RTOS">Real-time Operating System</a> \endhtmlonly
+\li \htmlonly <a href="http://en.wikipedia.org/wiki/Computer_multitasking">Multitasking</a> \endhtmlonly
+\li \htmlonly <a href="http://en.wikipedia.org/wiki/Process_(computing)">Processes</a> \endhtmlonly
+\li \htmlonly <a href="http://en.wikipedia.org/wiki/Event-driven_programming">Events</a> \endhtmlonly
+\li \htmlonly <a href="http://en.wikipedia.org/wiki/Scheduling_(computing)">Scheduling Schemes</a> \endhtmlonly
+\li \htmlonly <a href="http://en.wikipedia.org/wiki/Context_switch">Processor Context Switching</a> \endhtmlonly
+\li \htmlonly <a href="http://en.wikipedia.org/wiki/Inter-process_communication">Interprocess Communication</a> \endhtmlonly
+\li \htmlonly <a href="http://en.wikipedia.org/wiki/Semaphore_(programming)">Semaphores</a> \endhtmlonly
+\li \htmlonly <a href="http://en.wikipedia.org/wiki/Mailbox_(computing)">Mailboxes</a> \endhtmlonly
+\li \htmlonly <a href="http://en.wikipedia.org/wiki/Queue_(data_structure)">Queues</a> \endhtmlonly
+\li \htmlonly <a href="http://en.wikipedia.org/wiki/Interrupt">Interrupts</a> \endhtmlonly
+\li \htmlonly <a href="http://en.wikipedia.org/wiki/Interrupt_latency">Interrupt Latency</a> \endhtmlonly
+\li \htmlonly <a href="http://en.wikipedia.org/wiki/Interrupt_handler">Interrupt Handling</a> \endhtmlonly
+
+\section TN00_Books Books
+
+\li Algorithms in C by Robert Sedgewick
+\li Operating System Elements: A User Perspective by Peter Calingaert
+\li The Design of Operating Systems for Small Computer Systems by Stephen Kaisler
+
+\section TN00_InterestStuff Interesting Stuff
+
+\li \htmlonly <a href="http://www.bitsavers.org/pdf/intel/iRMX/">Intel's old iRMX-86 OS</a> \endhtmlonly
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

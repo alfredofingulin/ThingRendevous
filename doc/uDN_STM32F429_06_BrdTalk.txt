@@ -1,0 +1,55 @@
+/** \page uDN_STM32F429_06_BrdTalk DesNote/STM32F429 06: Board & Linux Box Communication
+
+The Nucleo board looks like a USB device.
+There's a "disk" you can drag-n-drop to load code.
+There's a "virtual terminal" you can use for debugging.
+
+Here are some Ubuntu Linux things to know.
+
+\section uDN_STM32F429_06_UpdateStLink Updating StLink Explains It Better Than This Note
+
+Comm between your Linux box and the Nucleo board uses ARM's StLink software.
+
+Head to the ARM website, get the StLink updater and update your board's comm software.
+
+The process of doing that update is a simple education; your board probably needs it anyway.
+Repeating all that info here adds nothing.
+
+\section uDN_STM32F429_06_USBDevicesCreated USB Devices Created
+
+Plugging-in the Nucleo board creates the following USB devices:
+
+\li /dev/sdb : a mass storage device
+\li /dev/serial : part of the CDC enumeration for the USB device on the board
+\li /dev/sg2 : a generic SCSI mass storage controller emulator
+\li /dev/ttyACM0 : a good old modem interface, but really a terminal and pass thru to the board's serial channel
+
+\section uDN_STM32F429_06_DialoutGroupUpdate  For /dev/ttyACM0, Add Users To The Distro's Dialout Group
+
+Use /dev/ttyACM0 for terminal IO (you always need a terminal).
+But first, Ubuntu must be appeased.  Here's how.
+
+~~ 1.  Note which users will need terminal access.
+
+~~ 2.  Login as you system's admin/superuser.
+
+~~ 3.  Use the following at the command line:
+
+\code
+/*
+sudo usermod -a -G dialout $USER
+*/
+\endcode
+
+Kind of dangerous, 
+as $USER can inflict a terminal on everything in the dialout group,
+but so be it.
+
+\section uDN_STM32F429_06_GtkTerm I Used GTK Term For A Terminal Emulator
+
+\htmlonly <a href="https://fedorahosted.org/gtkterm/">GTK Term</a> \endhtmlonly .
+is simple and it works.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

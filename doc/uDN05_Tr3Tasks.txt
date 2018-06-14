@@ -1,0 +1,17 @@
+/** \page uDN05_Tr3Tasks DesNote05: Instances/Tasks/Contexts
+
+Tr knows about three kinds:
+
+\li Tr Itself - ThingRendevous doing it's thing
+\li Explicit Interrupt - The interrupt task using a Tr copy.
+\li User - a presently running task this is not tr itself task and not an explicit-interrupt task
+
+Each:
+
+\li instance is a task
+\li task runs on it's own stack.
+\li context, the machine state of a task, is saved-to/restored-from the task stack.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

@@ -1,0 +1,23 @@
+/** \page uDN_ACM4TR_03_8BytStkAlign DesNote/ARM Cortex M4 and Tr 03: 8-Byte Stack Alignment
+
+In ARM Cortex M4, stacks must be aligned on 8-byte boundaries.
+(Well, strictly speaking, no; but these should be.)
+
+To do this, and avoid compiler \_\_attribute\_\_ majic/dependancies,
+do this:
+
+\code
+#define SomeTask_Stack_len 1024 // in bytes
+uint64_t SomeTask_Stack[ ( SomeTask_Stack_len / 8 ) ];
+
+// and use...
+
+(uint8_t *) &SomeTask_Stack[0];  // ...to pass the stack location
+\endcode
+
+The only reason this isn't a general ThingRendevous rule is
+because some processors don't do 64-bit ints too well.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

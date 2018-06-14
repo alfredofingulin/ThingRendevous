@@ -1,0 +1,85 @@
+/** \page Spec02_IDPriorities Spec02: IDs and Priorities
+
+Tr identifies each task and the task's communication mechanism
+using a unique ID number.
+Tasks also have a priority.
+
+Here are the conventions.
+
+\section Spec02_IDRules ID Rules
+
+\li Each task ID is unique.
+\li Duplicate IDs are not allowed.
+\li The ID refers not only to the task, but any stream, message buffer, or event queue possessed by the task.
+
+\section Spec02_IDAllocValues ID Values And Allocations
+
+IDs are unsigned 16-bits and range 0..0xFFFF; but many values are reserved.
+
+\code
+/*
+  ID Value  |  Usage
+------------+-----------------------------------------------------
+0           | o Not used by anyone.
+            | o Indicates "self" ie my task ID.
+            |
+1..62       | o Reserved by Tr for future use.
+            |
+63          | o Not used by anyone.
+            | o Indicates a broadcast to all tasks having ID 1..62.
+            |
+64          | o Tr's explicit interrupt task.
+            | o This task never receives broadcasts.
+            | o It does not have events, messages, or streams.
+            |
+65..126     | o Reserved by Tr for future use.
+            |
+127         | o Not used by anyone.
+            | o Indicates a broadcast to all tasks having ID 65..126.
+            |
+128         | o Tr itself.
+            | o This task never receives broadcasts.
+            | o It does not have events, messages, or streams.
+            |
+129..190    | o Reserved by Tr for future use.
+            |
+191         | o Not used by anyone.
+            | o Indicates a broadcast to all tasks having ID 129..190.
+            |
+192         | o Tr's clock tick task.
+            | o This task never receives broadcasts.
+            | o It does not have events, messages, or streams.
+            |
+193...254   | o Reserved by Tr for future use.
+            |
+255         | o The application's initialization task.
+            | o This task never receives broadcasts.
+            | o It does not have events, messages, or streams.
+            |
+0x0100..    |
+   0xFFFE   | o Available to application tasks.
+            |
+0xFFFF      | o Not used by anyone.
+            | o Indicates "empty" or "unused".
+------------+-----------------------------------------------------
+*/
+\endcode
+
+\section Spec02_PriorityRules Priority Rules
+
+\li Priority values are inverse: The larger the value, the lower the priority.
+\li Tasks with IDs 1..255 are forced to corresponding priority value 1..255.
+\li Tasks with IDs 0x0100..0xFFFE can be any value 0x0100..0xFFFE
+\li Tasks with IDs 0x0100..0xFFFE can duplicate priorities; ie two tasks may have the same priority value
+\li The task priority refers not only to the task, but any stream, message buffer, or event queue possessed by the task.
+
+\section Spec02_PriorityAllocValues Priority Values And Allocations
+
+IDs are unsigned 16-bits and range 0..0xFFFF; but many values are reserved.
+
+\li Priority value 0 means "self" or "the default priority"
+\li Priority value 0xFFFF means "empty" or "unused".
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

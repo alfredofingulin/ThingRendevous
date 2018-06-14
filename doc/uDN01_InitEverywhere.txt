@@ -1,0 +1,23 @@
+/** \page uDN01_InitEverywhere DesNote01: someModule_init Is Everywhere
+
+Tr does not make any run-time initialization assumptions.
+It does not depend on initialized data; it wants certainty.
+
+To do that, trAPI_Start() runs every module's initialization function.
+
+Every module contains a function of the form
+
+\code
+void someModule_init( void )
+{
+    // whatever it takes
+}
+\endcode
+
+whose job is just that.
+
+It's a constructor.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

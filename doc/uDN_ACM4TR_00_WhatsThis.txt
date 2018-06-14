@@ -1,0 +1,8 @@
+/** \page uDN_ACM4TR_00_WhatsThis DesNote/ARM Cortex M4 and Tr 00: What's This?
+
+This design note series straddles 
+ARM Cortex M4 architecture and ThingRendevous architecture.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

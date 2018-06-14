@@ -1,0 +1,72 @@
+/** \page Spec03_Tasks Spec03: Tasks
+
+A Tr task does something.  
+A task:
+
+\li can be pre-empted by a higher priority task; 
+Tr handles saving and restoring each task's context
+\li can receive streams, messages, or events from other tasks;
+Tr makes the delivery
+\li can send streams, messages, or events to other tasks;
+Tr is the messenger
+\li is static; once created, Tr will schedule or run the task until power is removed
+\li can have multiple instances; Tr can manage multiple task copies, each with its own thread.
+
+\section Spec03_Template Template
+
+A Tr task has the following template:
+
+\code
+void trTask_Name (void *theTaskData_p)
+{
+   // perform initialization
+   while ( some condition is true, usually forever )
+   {
+      // do whatever the task does
+   }
+}
+\endcode
+
+\section Spec03_Do A Task Can Do Whatever Needs Doing
+
+'Nuff said.
+
+\section Spec03_MultipleInstances Use theTaskData For Whatever's Needed
+
+Typically used for initialization data; could be used for anything.
+
+It's often used for multiple task instances. Here's how:
+
+\li there's one task function; one piece of executable code
+\li the task is created multiple times, each with a unique ID and unique stack
+\li in consequence, each instance gets its own thread of execution
+\li each task instance gets a unique theTaskData
+\li each task instance gets control; theTaskData tells the instance what to do or how to do it.
+
+\section Spec03_CreateDelete Statically Created; Never Deleted
+
+Tasks are created at system start.  Each has:
+
+\li ID
+\li priority
+\li entry point
+\li stack and stack size
+\li optional stream, message, and event buffers.
+
+The task lives forever.
+It will execute until pre-empted by other tasks.
+
+Tasks are never deleted; the only way to stop a task is to power down the system.
+
+\section Spec03_RR Round-Robin-ing And Time-Slice-ing
+
+Tr will round-robin tasks of equal priority:
+
+\li given two or more tasks of equal priority
+\li each task ready to run
+\li Tr selects the task that's been longest on the ready list
+\li that task will run until it is pre-empted or relinquishes control.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

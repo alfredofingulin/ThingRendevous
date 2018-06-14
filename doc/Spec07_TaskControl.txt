@@ -1,0 +1,35 @@
+/** \page Spec07_TaskControl Spec07: Task Control
+
+A Tr task can control itself or other tasks only by
+making itself or another task wait.
+Waiting "now" or "forever" is an option (think about it).
+
+\section Spec07_Itself Controlling Itself
+
+A task can make itself wait:
+
+\li zero-time; the task relinquishes control temporarily to any other task ready-to-run
+\li non-zero-time; the task relinquishes control for a minimum amount of time to any other task ready-to-run
+\li max-time; the task suspends itself until told to wait zero- or non-zero by another task.
+
+\section Spec07_OtherTasks Controlling Other Tasks
+
+A task can make another task wait:
+
+\li zero-time; if the target task is waiting then the wait is canceled and the task made ready-to-run
+\li non-zero-time; the target task is forced to wait a minimum amount of time
+\li max-time; the target task is suspended until told to wait zero- or non-zero by another task.
+
+\section Spec07_TaskTime Task Time
+
+The wait duration is in system clock ticks, as an unsigned 16-bit value.
+
+\li 0: relinquish or make ready
+\li 1..0xFFFE: the wait time in ticks
+\li 0xFFFF: wait indefinately.
+
+Told you you'd get it if you thought about it.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

@@ -1,0 +1,56 @@
+/** \page TN03_Eclipse TechNote03: Eclipse (32-bit): Set-up And Use
+
+Here's how the 
+\htmlonly <a href="http://www.eclipse.org/">Eclipse</a> \endhtmlonly 
+development environ is set-up and used with ThinkRendevous.
+
+\section TN03_YouNeedJavaJDK You Need Java JDK 1.8
+
+And that means OpenJDK, not JRE.
+
+Either
+
+~~ ensure /usr/lib/jvm is up-to-date
+
+or
+
+~~ install Java JDK into /usr/local/java using \htmlonly <a href="https://www.wikihow.com/Install-Oracle-Java-JDK-on-Ubuntu-Linux">these instructions.</a> \endhtmlonly  You'll need to sudo.
+
+and alternatively
+
+~~ consider \htmlonly <a href="https://stackoverflow.com/questions/14788345/how-to-install-jdk-on-ubuntu-linux">these instructions.</a> \endhtmlonly  Need to sudo here too.
+
+\section TN03_WhichOne Which Eclipse Package Is Used?
+
+We've used Eclipse package Oxygen 1A for C/C++.
+
+\section TN03_InstallingEclipse Installing Eclipse
+
+~~ 1.  Download the Eclipse package .tar.gz file.
+
+~~ 2.  Be root or sudo.
+
+~~ 3.  Copy the .tar.gz file to /usr/local.
+
+~~ 4.  Use "tar xfz filename.tar.gz" to extract everything.  
+It'll go into /usr/local/eclipse.
+
+~~ 5.  Make sure root owns all the files and directories.  Chown if necessary.
+
+~~ 6.  In /usr/bin, make a symbolic link to /usr/local/eclipse/eclipse.
+
+~~ 7.  Logout as root; login as a mere user.
+
+~~ 8.  Open a terminal, type "eclipse" and it should happen.
+
+\section TN03_WhatAmIGettingInto How About A Preview?
+
+Since Tr is intended for embedded systems,
+and Linux is hosting a cross-development platform,
+it makes sense to use something configured for cross development.
+
+\htmlonly <a href="https://mcuoneclipse.com/2017/07/30/breathing-with-oxygen-diy-arm-cortex-m-cc-ide-and-toolchain-with-eclipse-oxygen/">Eric has a great preview.</a> \endhtmlonly  
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

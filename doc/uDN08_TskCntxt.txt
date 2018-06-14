@@ -1,0 +1,16 @@
+/** \page uDN08_TskCntxt DesNote08: Task Context Switching
+
+Tr tasks store there machine state on the stack.
+
+Saving task context means emulating an interrupt occurrence.
+
+Restoring task context means emulating an interrupt completion.
+
+This is easy and uP specific.
+
+*/
+\endcode
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

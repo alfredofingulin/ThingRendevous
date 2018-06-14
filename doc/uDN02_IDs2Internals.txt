@@ -1,0 +1,167 @@
+/** \page uDN02_IDs2Internals DesNote02: Using IDs To Find Tr Internals
+
+Hard-coded IDs identify tasks, and associated streams, message queues, and events.
+Here's how IDs are mapped to internal data structures.
+
+\section uDN02_Why Hard-Code IDs vs The Alternatives
+
+It saves memory.  It's a constant.  
+It encourages thinking about the solution before implementing it.
+
+One alternative is serving-up a handle/token/hash/whatever.  
+Count on 32 bits RAM per handle/toke/hash/whatever.  
+And it'll be shared, probably using a global variable.
+Memory adds up; cohesion disappears.
+
+Another way: allocate a data structure Tr can manipulate.
+That's an implicit handle.
+Tr internals become visible; not good for security.
+And it burdens the application with Tr's private memory needs;
+that understates a kernel's memory usage.
+
+\section uDN02_GettingRejected Some Rejected Mappings
+
+An ID can be an index into an array.  
+That restricts ID values; or uses much RAM.
+
+The ID is a handle to allocated memory.
+Memory allocation isn't always deterministic.
+And there's no static bound on kernel RAM usage.
+
+The ID can be tossed in a table.
+Table search is cagey, and depends on ID value.
+The value isn't predictable;
+favoring ID values is a burden to the application writer.
+
+\section uDN02_WellHell Map Using A Binary Tree
+
+The next best solution is a balanced binary tree.
+Tree search times are well known.
+
+But a balanced binary tree isn't necessary; 
+just one that's good enough.
+
+\section uDN02_TreeDeterministic Tree As Array And Bounding Memory
+
+Trees are built by:
+
+\li allocating a chunk of memory for the root node
+\li allocating chunks for left and right nodes
+\li re-linking pointers as needed when pruning/growing/balancing the tree.
+
+Tr doesn't have the luxury of allocatable memory.
+
+Sedgewick, chapter 14, points the way.
+He describes a tree-as-array at chapter's end.  
+
+An array of tree nodes can be built.
+
+\li Memory requirements are known
+\li An array index is used, instead of a pointer, to find child nodes
+\li Array indexes, not pointers, help find related data.
+
+\section uDN02_MappingMapping Mapping ID To Tree Node To Data Structure
+
+Restated:
+
+\li The ID is a key into a tree.  Array indexes "point" to the parent and child notes.
+\li A node's position index never changes; the key may.
+\li Every tree index can be an index into a corresponding array of data structures.
+\li The data structures could be task control blocks, queue info, whatever's needed.
+\li The tree is the same.  Common code can prune/grow/balance the tree.
+
+\section uDN02_PicEx An Example
+
+\code
+/*
+Consider the following arbitrary mail box design.
+Up to six mailboxes are possible; in this example, five are utilized.
+
+Here's the ID tree (read left to right):
+
+ID 0x80, idx [0]
+child_left  ----------- ID 0x90, idx [3]
+child_right ----+       child_left ---- [255]
+                |       child_right --- [255]
+                |
+                |
+                +------ ID 0x70, idx [2]
+                        child_left ---------- ID 0x78, idx [5]
+                        child_right ---+      child_left ---- [255]
+                                       |      child_right --- [255]
+                                       |
+                                       |
+                                       +----- ID 0x60, idx [4]
+                                              child_left ---- [255]
+                                              child_right --- [255]
+
+Here's the binary ID table; the mailbox table is to the right;
+each binary ID tree element corresponds to the mailbox table element.
+
+idx  ID tree             idx  mailbox table
+
+[0]  ID: 0x80            [0]  0x80's mailbox data 
+     child_left:    3
+     child_right:   2
+
+[1]  ID: 0xFF            [1]  unused mailbox data
+     child_left:  255
+     child_right: 255
+
+[2]  ID: 0x70            [2]  0x70's mailbox data 
+     child_left:    5
+     child_right:   4
+
+[3]  ID: 0x90            [3]  0x90's mailbox data
+     child_left:  255
+     child_right: 255
+
+[4]  ID: 0x60            [4]  0x60's mailbox data 
+     child_left:  255
+     child_right: 255
+
+[5]  ID: 0x78            [5]  0x78's mailbox data 
+     child_left:  255
+     child_right: 255
+*/
+\endcode
+
+\section uDN02_ForeverAlways Once A Node Is Inserted, It Never Moves; Deleting A Node Deletes Correspondng Data
+
+Look at the pic above.  
+
+Once an ID is inserted in the tree,
+the ID's node index never changes.
+The child index values can change.
+
+And the corresponding data structure (a mailbox in this case) 
+never changes.
+
+Deleting an ID empties the node and the corresponding data.
+
+\section uDN02_IdxTiesTogether The Index Value Maps ID And Data
+
+The index value links ID tree node to a corresponding data structure.
+Not a pointer; not an embedded data structure.
+
+Things are simple.
+
+\section uDN02_RebalEmpt Rebalancing The Tree?  Finding Empty Spots?
+
+Binary trees can become unbalanced, especially with frequent inserts and deletes.
+
+Most embedded software rarely performs frequent inserts and deletes.
+Entries are created once and exist for as long as the power is on.
+
+If rebalancing is needed, an API can provide it.
+The application controls rebalancing
+(sort of like controlling garbage collection in other systems).
+
+There are two ways handle empty slots.  
+Use a linear search.  
+Remember the last empty
+slot found on insert or delete.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

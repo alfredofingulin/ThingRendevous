@@ -1,0 +1,114 @@
+/** \page TN05_GCCARMEclipseTrLib TechNote05: Eclipse and GCC ARM: Tr Library 
+
+Here's how to marry Eclipse with the GCC ARM tools
+to build the Tr library.
+
+\section TN05_ToolMarriage How To Combine Eclipse and GCC ARM
+
+~~ 1.  Eclipse wants to know the path and prefix to the cross development tools.
+Use the:
+
+\li tools triplet
+\li installation path for the tools: /usr/local/package/bin
+
+Get this from the toolset's readme file.
+For ARM GCC version 4.7 released third quarter 2013, this is:
+
+\li arm-none-eabi- (that last hyphen is important)
+\li /usr/local/gcc-arm-none-eabi-4_7-2013q3/bin
+
+View these project settings using
+
+\li Properties > C/C++ Build > Settings
+\li Tab Tool Settings > Cross Settings
+
+~~ 2.  Add architecture switches for the Cortex M4 processor.  
+The toolset's readme file has that; here's more.
+
+~~ 2.1.  For the compiler, set the following using:
+
+\li Properties > C/C++ Build > Settings
+\li Tab Tool Settings > Cross GCC Compiler
+
+to add these switches to the Miscellaneous > Other Flags box:
+
+\li -mthumb -mcpu=cortex-m4
+
+~~ 2.2.  For the assembler, do the same:
+
+\li Properties > C/C++ Build > Settings
+\li Tab Tool Settings > Cross GCC Assembler
+
+to add these switches to the General > Assembler flags box:
+
+\li -mthumb -mcpu=cortex-m4
+
+~~ 3.  You're done with this part.
+
+\section TN05_How2TrLib How To Use Both To Create The Tr Library
+
+~~ 1.  Get the latest Tr tarball into a directory.  Call it tr for now.
+
+~~ 2.  Read thru Eclipse's Help, section C/C++ Development User Guide. Esp see
+these subsections:
+
+\li Concepts > CDT Projects > the bullet on Static Library
+\li Getting Started > Import a C/C++ source file system
+
+~~ 3.  Create:
+
+\li a new C project
+\li one that is static library project 
+\li an empty project
+\li a Cross GCC project.
+
+~~ 4.  Fill in the:
+
+\li Cross compiler prefix
+\li Cross compiler path.
+
+Do this now.  Eclipse will pre-configure some paths based on this info.
+If not done now, another default path will be chosen, 
+and it's painful to change later.
+
+~~ 5.  Then, import:
+
+\li from the file system
+\li from the directory for the un-tar-ed the source code
+\li only the subdirectories inc/ and src/
+\li only the files *.h and *.c
+
+Do this by right-clicking on the project: 
+
+\li selecting Import
+\li do so from the File system
+\li navigate to the directory containing un-tar-ed Tr.
+
+~~ 6.  But don't build anything yet.
+
+~~ 7.  Set the include path for the Tr project.
+Right-click on tr and use:
+
+\li Properties > C/C++ Build > Settings
+\li Tab Tool Settings > Cross GCC Compiler
+
+to add these directories to the Includes > Include paths (-l) list:
+
+\li tr/src
+\li tr/inc
+
+Add as a workspace path, not a file system directory.
+Do it for all configurations, both release and debug.
+
+~~ 8.  Now go ahead and build.
+
+A link-able .a file is created.
+It contains Tr for the target CPU.
+
+~~ 9.  You might have to add the uP subdirectory to the build; it's in ext/.  
+Special handling is usual; see the uP's Design Notes for details.
+
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

@@ -1,0 +1,163 @@
+/** \page uDN_ACM4_02_RegsRem DesNote/ARM Cortex M4 02: Registers
+
+A handy reminder.
+
+\section uDN_ACM4_02_RegUseConvent Cortex M4 Register Useage Conventions
+
+Per ARM's
+\htmlonly <a href="http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.ihi0042e/index.html">application binary interface conventions</a> \endhtmlonly .  
+
+\code
+/*
+    r0   a1       Scratch register 
+    r1   a2       Scratch register    
+    r2   a3       Scratch register     
+    r3   a4       Scratch register    
+    r4   v1       Register variable
+    r5   v2       Register variable
+    r6   v3       Register variable
+    r7   v4       Register variable
+    r8   v5       Register variable
+    r9   v6/rfp   Register variable/Real number frame pointer
+   r10   sl       Stack limit
+   r11   fp       Argument pointer
+   r12   ip       Temporary workspace
+   r13   sp       Stack pointer
+   r14   lr       Link register
+   r15   pc       Program counter
+*/
+\endcode
+
+\section uDN_ACM4_02_RegCallConvent Cortex M4 Register Calling Conventions
+
+Per ARM's
+\htmlonly <a href="http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042e/IHI0042E_aapcs.pdf">ARM Architecture Procedure Calling Standard (AAPCS)</a> \endhtmlonly .  
+
+\code
+/*
+    r0   a1       Scratch register    First function argument    Integer function result
+    r1   a2       Scratch register    Second function argument   
+    r2   a3       Scratch register    Third function argument    
+    r3   a4       Scratch register    Fourth function argument   
+    r4   v1       Register variable
+    r5   v2       Register variable 
+    r6   v3       Register variable
+    r7   v4       Register variable
+    r8   v5       Register variable
+    r9   v6/rfp   Register variable   Real number frame pointer
+   r10   sl       Stack limit
+   r11   fp       Argument pointer
+   r12   ip       Temporary workspace
+   r13   sp       Stack pointer
+   r14   lr       Link register       Where we return to
+   r15   pc       Program counter
+*/
+\endcode
+
+\section uDN_ACM4_02_RegPresConvent Cortex M4 Register Caller/Callee Preservation Conventions
+
+Beats reading the
+\htmlonly <a href="http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042e/IHI0042E_aapcs.pdf">ARM Architecture Procedure Calling Standard (AAPCS)</a> \endhtmlonly .  
+
+\code
+/*
+    r0   a1       Scratch register      Caller assumes destroyed.  Callee can freely use.
+    r1   a2       Scratch register       "                          
+    r2   a3       Scratch register       "                          
+    r3   a4       Scratch register       "                          
+    r4   v1       Register variable     Caller assumed preserved.  Callee must save/restore to use.
+    r5   v2       Register variable      "                          
+    r6   v3       Register variable      "                          
+    r7   v4       Register variable      "                          
+    r8   v5       Register variable      "                          
+    r9   v6/rfp   Register variable/rfp  "                          
+   r10   sl       Stack limit           ?
+   r11   fp       Argument pointer      ?
+   r12   ip       Temporary workspace   ?
+   r13   sp       Stack pointer         Caller assumed preserved.  Callee must save/restore to use.
+                                        Usually modified on entry/exit 
+                                        to create/destroy automatics/stack frame.
+   r14   lr       Link register         Caller supplied, assumed preserved.  
+                                        Callee uses as return target,
+                                        must save/restore to use/nest calls.
+   r15   pc       Program counter       Caller set to branch to target callee.
+                                        Callee branches thru lr to return.
+*/
+\endcode
+
+\section uDN_ACM4_02_RegExcepConvent Cortex M4 Register Exception Stacking Conventions
+
+Per the ARMv7-M Architecture Reference Manual, section B1.5 ARMv7-M exception model,
+in particular section B1.5.7 Stack alignment on exception entry.
+
+\code
+/*
+Register View
+
+    r0   a1       Scratch register      sp[0]
+    r1   a2       Scratch register      sp[4]
+    r2   a3       Scratch register      sp[8]
+    r3   a4       Scratch register      sp[12]
+    r4   v1       Register variable     Not stacked.
+    r5   v2       Register variable      "
+    r6   v3       Register variable      "
+    r7   v4       Register variable      "
+    r8   v5       Register variable      "
+    r9   v6/rfp   Register variable/rfp  "
+   r10   sl       Stack limit            "
+   r11   fp       Argument pointer       "
+   r12   ip       Temporary workspace   sp[16]
+   r13   sp       Stack pointer         Not stacked, but may switch
+                                        from process to main sp.
+   r14   lr       Link register         sp[20], and then
+                                        filled in with execption return.
+   r15   pc       Program counter       sp[24], and then
+                                        filled in with interrupt vector execute.
+   -- Also:
+   xPSR                                 sp[28]
+
+
+Stack View
+
++  hi-mem to lo-mem
+|
+v
+
+sp[32] ->    ?              previous stack frame
+sp[28] ->    xPSR           program status register
+             r15   pc       Program counter
+             r14   lr       Link register
+             r12   ip       Temporary workspace
+              r3   a4       Scratch register    
+              r2   a3       Scratch register     
+              r1   a2       Scratch register    
+sp[00] ->     r0   a1       Scratch register 
+
+Based upon the operating mode at exception occurance,
+will always use the current stack pointer,
+process or main, to save context.
+
+
+Registers Not Stacked
+
+    r4   v1       Register variable     
+    r5   v2       Register variable      
+    r6   v3       Register variable      
+    r7   v4       Register variable      
+    r8   v5       Register variable      
+    r9   v6/rfp   Register variable/rfp  
+   r10   sl       Stack limit            
+   r11   fp       Argument pointer       
+
+If used by the callee, 
+then are expected to be preserved by callee.
+
+Note that code running on the process stack pointer,
+when excepted/interrupted,
+can result in these registers being saved on the main stack!
+*/
+\endcode
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

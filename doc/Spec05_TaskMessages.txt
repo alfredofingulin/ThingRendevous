@@ -1,0 +1,39 @@
+/** \page Spec05_TaskMessages Spec05: Tasks And Messages
+
+A Tr task can:
+
+\li receive fixed length messages from it's own message queue; it cannot receive messages from another task's message queue
+\li send fixed length messages to another task's message queue; the target task ID specifies the target task's message queue
+\li order messages by priority or FIFO.
+
+\section Spec05_MessageCreation Task Message Queue Characteristics
+
+A task can have a message queue or not.
+When the task is elaborated, the message queue can have:
+
+\li zero entries; the task has no messages
+\li non-zero quantity of entries 1..1024; the number of messages in the queue
+\li message payload length of 8, 16, 24, or 32 bytes
+\li queue ordering of either sending task ID priority or FIFO.
+
+Whenever a message is dequeued, the message's originator task ID is also presented.
+
+\section Spec05_Operations Task Message Operations
+
+Receive extracts a message from the task's own message queue.
+If nothing is available, the task will be blocked until something becomes available and any other ready-to-run task will run.
+
+Take is just like receive, but:
+
+\li if nothing is available, the task will regain control; 
+\li it will not be blocked and any other higher priority task will not be run.
+
+Send enqueues a message to a target task's message queue.
+If another task of higher priority is ready to run, then the sending task may be blocked.
+
+Give is just like send, but:
+it will not be blocked and any other higher priority task will not be run.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

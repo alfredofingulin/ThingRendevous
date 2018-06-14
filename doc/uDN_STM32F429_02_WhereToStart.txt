@@ -1,0 +1,18 @@
+/** \page uDN_STM32F429_02_Where2Start DesNote/STM32F4xx 02: Where To Start
+
+Unzip the en.stm32fcubefw.zip into ext/STM32F429Nucleo144.
+
+\li Under ext/STM32F429Nucleo144, unpack only Drivers and Middlewares
+\li Leave the subdirectory structure intact
+\li A subsequent design note describes how we'll use Drivers and Middlewares
+\li You may unpack Projects/STM32429ZI-Nucleo elsewhere; we won't use it, but it'll be a good reference.
+
+Read en.stm32fcubefw.zip's file Release_Notes.html.
+
+The continue with 
+Documention/STM32429ZI-Nucleo/STM32CubeF4GettingStarted.pdf
+and head to the next design note.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

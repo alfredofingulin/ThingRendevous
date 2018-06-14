@@ -1,0 +1,40 @@
+/** \page uDN_ACM4_01_Things2Get DesNote/ARM Cortex M4 01: Things To Get
+
+Here are documents and source code to have handy.
+
+Tr uses source code from the three sources, Freescale, ARM, ARM GCC;
+modifies some of it; and includes modified versions in this subdirectory.
+
+Have the docs for reference; Tr design notes expand on this info.
+
+\section uDN_ACM4_01_ARMAppNotes ARM's App Notes For The Cortex M4
+
+Go to \htmlonly <a href="http://www.arm.com/">ARM's website</a> \endhtmlonly
+and get Application Note 179, Cortex-M3 Embedded Software Development;
+it's also relevant to M4 development.
+This note covers exception handling and some context switching issues;
+that's important to the rendezvous tasks.
+
+Get Application Note 298 on Cortex M4 Lazy Stacking and Context Switching;
+also important to the rendezvous tasks.
+
+Visit \htmlonly <a href="http://mcuoneclipse.com/2013/07/21/diy-free-toolchain-for-kinetis-part-1-gnu-arm-build-tools/">The DIY Free Toolchain for Kinetis.</a> \endhtmlonly
+This fine man's notes started about the same time as mine; lots of good info here.
+
+\section uDN_ACM4_01_ARMCMSIS ARM's CMSIS Spec And Code For The Cortex M4
+
+Get
+\htmlonly <a href="http://www.arm.com/cmsis">ARM's CMSIS spec</a> \endhtmlonly
+too:
+
+\li register definition headers 
+\li start-up code files
+\li standard practices 
+
+for ARM Cortex M4 development.
+
+These are included in a uP-specific ext subdirectory.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

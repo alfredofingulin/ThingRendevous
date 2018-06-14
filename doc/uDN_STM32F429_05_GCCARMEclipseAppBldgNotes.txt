@@ -1,0 +1,36 @@
+/** \page uDN_STM32F429_05_GCCARMEclipseAppBldgNotes DesNote/STM32F4xx 05: Eclipse and GCC ARM: Appliction Building Notes
+
+\link TN08_GCCARMEclipseTrApp \endlink
+describes how to build a Tr app.
+
+Here are details, based on an Eclipse set-up.
+
+\section uDN_STM32F429_05_Def Defines
+          
+\li STM32F429xx
+\li USE_HAL_DRIVER
+\li USE_STM32F4XX_NUCLEO_144
+
+\section uDN_STM32F429_05_Inc Include Paths
+
+\li tr/inc
+\li F429/Goodies -- or -- F429/trDrivers (one or the other, not both)
+\li F429/Drivers/BSP/STM32F4xx_Nucleo_144
+\li F429/Drivers/CMSIS/Include
+\li F429/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+\li F429/Drivers/STM32F4xx_HAL_Driver/Inc
+
+\section uDN_STM32F429_05_Libs Libraries
+
+\li tr in tr/Debug
+\li F429 in F429/Debug
+
+\section uDN_STM32F429_05_Linker Linker Directives
+
+\li F429/Goodies/gcc_STM32F429ZI.ld
+\li -- or --
+\li F429/trDrivers/gcc_STM32F429ZI.ld
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

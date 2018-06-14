@@ -1,0 +1,61 @@
+/** \page TN01_DelEnvToolsStyle TechNote01: Deliverables, Environment, Tools, Conventions, and Style
+
+ThingRendevous:
+
+\li is a software configuration item
+\li and your app is a software configuration item too
+\li tho both Tr and your app are linked together, both are separate and developed separately
+\li is developed in a Linux environ
+\li uses the GNU and Eclipse toolchain
+\li tries to follow the  usual Linux style.
+
+\section TN01_SourceIsDeliverable A Deliverable ThingRendevous Consists Of Source And Docs
+
+These are the usual *.c/.h and *.txt files.
+You compile and build the source, .c/.h, for your use.
+The .txt files contain supporting documentation.
+
+Doxygen is applied to source and documentation to create a browse-able doc package
+(you're reading it now).
+Learn more: tap Doxygen link at the lower right corner of this page.
+
+See \link uDN00_DirStrucChart \endlink for partitioning and file locations.
+
+\section TN01_EnvironUbuntu The Environment is Linux; The Distro is Ubuntu
+
+Just about any Linux distro or equivalent Windows environ should work.
+
+\section TN01_ToolSets Tr Is Tool-Agnostic; Eclipse Is Used; So Is The Command Line
+
+Tr doesn't care about toolchains.  
+These tech notes include
+instructions for Eclipse; 
+there's also some command line tools.
+Whatever works.
+
+\section TN01_CodingStyle Linux Coding Style and Conventions Observed, Mostly
+
+In general, the 
+\htmlonly <a href="http://www.kernel.org/doc/Documentation/CodingStyle">Linux coding style</a> \endhtmlonly 
+is observed.  Further:
+
+\li Mixed case is used, with underscores where I feel like it
+\li C99 types are used, as defined in stdint.h
+\li initialized variables are not used; Tr uses initialization functions (aka something-like-a-constructor) at start-up rather than rely on pre-main() start-up initialization
+\li types are appended with _t (not always, 'cause some doctrine states _t is reserved for Linux kernel items), 
+structs with _s, defines with _something (usually with a lowercase word that classifies the constant), 
+and pointers with _p.
+\li enums are always assigned a value; enums are often used as indexes into arrays, like Ada.
+
+Tr uses 
+\htmlonly <a href="http://www.gnu.org/software/indent/manual/indent.html">indent with your own command switches</a> \endhtmlonly
+with the command line options: 
+
+\li -linux; for usual Linux stuff, but
+\li -l120; 120 character lines
+\li -i4; four-space indent (not eight!)
+\li -nut; spaces instead of tabs.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

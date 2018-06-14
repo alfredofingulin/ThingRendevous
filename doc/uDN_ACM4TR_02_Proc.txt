@@ -1,0 +1,34 @@
+/** \page uDN_ACM4TR_02_Proc DesNote/ARM Cortex M4 and Tr 02: Modes, Priviledges, Stacks
+
+Here's how a Tr context is presented by ARM modes, priviledges, and stacks.
+
+\code
+/*
+                      ||        ARM Cortex M4...
+   Task Context       ||   Mode    |   Privilege    |   Stack     
+======================++===========+================+==========================
+  User                ||  thread   |  unprivileged  |  process
+                      ||           |                |    unique for
+                      ||           |                |    user task
+----------------------++-----------+----------------+--------------------------
+  Tr Itself           ||  thread   |  privileged    |  process
+                      ||           |                |    unique for
+                      ||           |                |    tr task
+----------------------++-----------+----------------+--------------------------
+  Explicit Interrupt  ||  handler  |  privileged    |  main
+                      ||           |                |    unique for
+                      ||           |                |    tr
+                      ||           |                |    explicit interrupt
+                      ||           |                |    task
+----------------------++-----------+----------------+--------------------------
+  (ghost)             ||           |                |
+  implicit interrupt  ||  handler  |  privileged    |  main
+                      ||           |                |    whatever's for
+                      ||           |                |    explicit interrupt
+
+*/
+\endcode
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

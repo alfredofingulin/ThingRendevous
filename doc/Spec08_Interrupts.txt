@@ -1,0 +1,178 @@
+/** \page Spec08_Interrupts Spec08: Interrupts
+
+Interrupts signal external events to the application.
+
+Tr handles hardware interrupts in two ways:
+implicitly and explicitly.
+
+\section Spec08_Impl Implicit Interrupts; Tr Isn't Aware of 'Em, But An App Is
+
+If an interrupt
+
+\li never re-enables other interrupts
+\li -- and --
+\li never invokes a Tr operation
+
+during execution
+then the interrupt does not have to notify Tr.  
+
+\subsection Spec08_ImplTyp Typical Operation
+
+Implicitly:
+
+\code
+/*
+   a task is running
+      an interrupt fires
+         the machine's state is saved on the stack of the currently running task
+            the interrupt handler starts
+               the interrupt handler does it's thing
+            the interrupt handler completes
+         the machine's state is restored from the stack of the currently running task
+   the task continues.
+*/
+\endcode
+
+\subsection Spec08_ImplWhy Why Do This?
+
+It's an easy way to handle brief hardware intensive interrupts,
+ones that communicate little with the system.
+
+\subsection Spec08_ImplConseq Consequences; Have Plenty Of Stack
+
+When the interrupt fires, any task could be running;
+the interrupt will use the task's stack.
+
+All tasks must have enough stack
+for the most stack-intensive interrupt possible.
+
+\subsection Spec08_ImplScheduling Scheduling Implicitly
+
+Tr and all other tasks "don't know the interrupt exists."
+Implicit interrupts do not cause rescheduling.
+
+Rescheduling will occur when:
+
+\li an implicit interrupt completes
+\li the interrupted task regains control
+\li the task makes a Tr call that causes rescheduling to occur.
+
+\section Spec08_Expl Explicit Interrupts; Tr Has An Interrupt Task
+
+If an interrupt
+
+\li re-enables other interrupts
+\li -- or --
+\li invokes a Tr operation
+
+during execution
+then the interrupt must notify Tr.
+
+\subsection Spec08_ExplTyp Typical Operation
+
+Explicitly:
+
+\code
+/*
+   a task is running
+      an interrupt fires
+         the machine's state is saved on the stack of the currently running task
+            an interrupt handler starts
+               an interrupt handler tells Tr that an interrupt is entered
+                  Tr makes the interrupt part of an interrupt task with an interrupt task stack
+               an interrupt handler does it's thing; enabling interrupts or invoking Tr operations
+            an interrupt handler completes
+               an interrupt handler tells Tr that an interrupt has left
+                  Tr finishes the interrupt task and determines which task runs next
+         the machine's state is modified  
+   the task continues or a new task runs.
+*/
+\endcode
+
+\subsection Spec08_ExplWhy Why Do This?
+
+This is how interrupts:
+
+\li communicate events to tasks
+\li pre-empt the current task and run another task
+\li enable other interrupts during interrupt servicing.
+
+\subsection Spec08_ExplConseq Consequences; It Lets (Almost) Anything Happen
+
+Explicit interrupts may be nested.  
+Interrupts can be re-enabled.
+Another interrupt can fire and another explicit interrupt entered.
+
+No matter how deep the nesting, only one interrupt task will run.
+The interrupt task handles all explicit interrupts, in any order.
+
+The interrupt task will pre-empt all other tasks, 
+including Tr, for the duration.
+
+Tr will not run a new task until all nested explicit interrupts have left.
+
+Explicit interrupts may push events, message, or streams to other tasks,
+but may not have have (and cannot pend) at same.
+A pend implies a possible task switch.  
+A task switch won't happen within an explicit interrupt;
+a task switch will happen only upon leaving the last nested explicit interrupt.
+
+\subsection Spec08_ExplExamp An Explicit Example
+
+\code
+/*
+   task_S is high priority, but is waiting for a message
+   so task_R is currently running 
+      interrupt_A fires
+         interrupt_A notifies Tr of entry
+         interrupt_A re-enables interrupts
+         interrupt_A executes
+            interrupt_B fires during interrupt_A's operation
+               interrupt_B notifies Tr of entry
+               interrupt_B re-enables interrupts
+               interrupt_B executes; uses Tr to post a message to task_S
+               interrupt_B tells Tr that it's leaving
+         interrupt_A continues execution
+         interrupt_A tells Tr that it's leaving
+      only then does Tr reschedule
+         Tr decides task_R should be pre-empted
+         task_S will get to run 'cause a message has arrived
+   task_S is currently running.
+*/
+\endcode
+
+\subsection Spec08_ExplSo So, Explicit Interrupts Notify Tr On Enter-ing And Leave-ing?
+
+Right.
+
+\subsection Spec08_ExplScheduling Scheduling Explicitly
+
+Tr and any other tasks "know the interrupt exists."
+Explicit interrupts may cause rescheduling.
+
+Rescheduling will occur when:
+
+\li the last nested explicit interrupt completes
+\li the last nested interrupt leave is invoked
+\li Tr regains control and reschedules
+\li the interrupted task may be pre-empted and another task run.
+
+\section Spec08_Config Configuration
+
+Tr can support implicit interrupts only 
+or implicit and explicit interrupts together.
+
+\subsection Spec08_ConfigImp Implicit Configuration
+
+Implicit interrupts are always supported by Tr.
+Tr doesn't know about 'em, so Tr doesn't need to provide anything.
+There's nothing to configure for implicit interrupts.
+
+\subsection Spec08_ConfigExp Explicit Configuration
+
+Explicit interrupts are configured into Tr's executable.
+Tr needs the size of the interrupt stack.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

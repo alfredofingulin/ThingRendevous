@@ -1,0 +1,40 @@
+/** \page uDN_STM32F429_SuppFiles DesNote/STM32F429 07: Support Files
+
+There's a variety of support files.
+
+\section uDN_STM32F429_HandyStuff ext/STM32F429Nucleo144/HandyStuff
+
+Two files are there to help you test your board interface set-up.
+Both are binaries, created using ARM's mBed online compiler tools.
+Drag-n-drop these to your board when connected via USB.
+
+\li Nucleo_blink_led_NUCLEO_F429ZI.bin - just blinks an LED
+\li Nucleo_printf_NUCLEO_F429ZI.bin - dumps to the virtual terminal
+
+\section uDN_STM32F429_Goodies_copies ext/STM32F429Nucleo144/Goodies/*.c/h but not F429_*
+
+These are copies from the ext/STM32F429Nucleo144/Drivers path,
+configured for this board.
+
+\li These initialize and perform IO for various parts of the board.
+\li These do not require Tr to operate.
+
+Modify these to build a unique configuration.
+
+\section uDN_STM32F429_Goodies_uniqs ext/STM32F429Nucleo144/Goodies/F429_*.c/h
+
+F429_*.c/h are unique support files for the board created for this distribution.
+
+\li These initialize and perform IO for various parts of the board.
+\li These do not require Tr to operate.
+
+\section uDN_STM32F429_trDrivers ext/STM32F429Nucleo144/trDrivers
+
+trF429_*.c/h are Tr-based support files for the board.
+
+\li These utilize Tr API calls to operate.
+\li These can override HAL functions to make changes to operation.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

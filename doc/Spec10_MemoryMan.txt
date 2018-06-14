@@ -1,0 +1,9 @@
+/** \page Spec10_MemoryMan Spec10: Memory Management
+
+Tr does not provide any memory management tools.
+
+It's a thing to do, someday.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

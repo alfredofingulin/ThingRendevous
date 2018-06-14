@@ -1,0 +1,51 @@
+/** \page TN07_BldATrApp TechNote07: Building A Tr App
+
+~~ 1.  Set up a separate directory for the application.
+
+Make sure it can get to:
+
+\li tr/inc, the app needs trAPI.h, trAPIRet.h, and trAPIEI.h
+\li ext, for the app to use neat CPU specific support functions
+
+and link to the Tr and ext static library archives.
+
+~~ 2.  Create main.c; add hardware inits.
+
+You supply function main().  
+Here's what your main() should do:
+
+\li Whatever hardware initialization is necessary to create a quiescent system.
+\li Call function trAPI_start().
+
+~~ 3.  Write the application.
+
+All system calls are defined in trAPI.h.
+Interrupts make use of trAPIEI.h.
+
+~~ 4.  Make sure your task requirments are defined.
+
+See \link TN09_AllAboutTrTasks \endlink .
+
+~~ 5.  Create task tree file trTi.c
+
+Tr does not create tasks, steams, messages, events at run-time.
+It's done statically, at build time.
+
+To do that, at the command line inflict tool:
+
+\code
+/*
+python3 ./tool/trtgen.py -t -indir ThingRendevousSourceDir YouAppDir
+*/
+\endcode
+
+and it will generate this file.
+
+~~ 6.  Compile and link the application.
+
+Using whatever scheme decided upon.
+Link it to Tr's and ext's static library archives.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

@@ -1,0 +1,38 @@
+/** \page TN02_CmdLn TechNote02: Building A Tr Library Config, Tr App, and Docs
+
+Using the command line?  Here are things to remember.
+
+\section TN02_IncBldPth Building Tr: Include Paths
+
+When building Tr, make sure these paths are used for include files:
+
+\li tr/inc
+\li tr/src
+
+Any ARM Cortex M4 CPU-specifics are written in assembler.
+
+\section TN02_StLib Create a Static .a Archive
+
+Create a static library, a .a archive file, of all compiled object modules.
+That'll be linked to your application.
+
+\section TN02_IncAppPth Building An App: Include Paths
+
+When building an application (and not Tr), 
+use these paths for include files:
+
+\li tr/ext/SomeCPU ; whatever is specific to your CPU
+\li tr/inc ; that's it, the app doesn't need anything else.
+
+\section TN02_TrLib Building An App: Link To The Tr Static Archive
+
+Remember to incorp this into your library list.
+
+\section TN02_HowDox How To Build Browse-able Docs?
+
+Get in Tr's root directory, use the command line,
+and invoke "doxygen Doxyfile".
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

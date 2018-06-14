@@ -1,0 +1,26 @@
+/** \page TN04_GCCARMTools TechNote04: GCC ARM Tools: Set-up And Use
+
+ARM maintains an  
+\htmlonly <a href="https://launchpad.net/gcc-arm-embedded">embedded development tool set at launchpad.net</a> \endhtmlonly
+It includes the usual tools, pre-built binaries, and Linux and Windows tools.
+
+ARM's instructions are good; the following might help.
+
+~~ 1.  Download the toolset package .bz2 file to /path/SomeWhere
+
+~~ 2.  cd /usr/local ; install things there.
+
+~~ 3.  Make yourself root or prepare to sudo.
+
+~~ 4.  Use "tar xjf /path/SomeWhere/package.bz2" to extract everything.  
+Everything will be put into /opt/package.
+
+~~ 5.  Ensure root owns all the files and directories.  Chown if necessary.
+
+~~ 6.  Use a fully qualified pathname to access the tools.
+
+The toolset's readme file has useful suggestions too.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

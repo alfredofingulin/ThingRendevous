@@ -1,0 +1,14 @@
+/** \page Spec01_Operates Spec01: Operates Like Other Real-time Multitasking Priority-based Kernels
+
+And that is:
+
+\li the task is the basic unit of execution
+\li tasks communicate using streams, messages, or events
+\li tasks effect communication thru the kernel
+\li the kernel gets an excuse to re-schedule tasks
+\li the highest priority task wins and executes
+\li the kernel handles pre-emption and context switching, and passing-along streams, messages, or events.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

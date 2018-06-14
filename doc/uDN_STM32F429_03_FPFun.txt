@@ -1,0 +1,26 @@
+/** \page uDN_STM32F429_03_FPFun DesNote/STM32F4xx 03: Floating Point Fun
+
+As of this writing, Tr does not support floating point context switches.
+
+But: the STM32F4xx series includes a floating point unit.
+
+\li the FPU can be disabled, and all single or double precision calcuations done in software
+\li float-s (single precision) are supported in hardware
+\li double-s (double precision) are emulated in software
+
+You may want to change GCC switches:
+
+\li Emulated float, -mfloat-abi=soft
+\li Hardware FPU, -mfloat-abi=softfp
+\li there's another but I don't recommend it.
+
+Reading the 
+\htmlonly <a href="http://gcc.gnu.org/onlinedocs/gcc/ARM-Options.html">GCC command line switches for ARM</a> \endhtmlonly
+is strongly recommended.
+
+ST App Note 044, /Floating point unit demonstration on STM32 microcontrollers/,
+is highly recommended.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

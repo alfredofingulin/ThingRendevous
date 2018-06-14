@@ -1,0 +1,15 @@
+/** \mainpage What Is This? 
+
+ThingRendevous, aka Tr, 
+is a real-time multitasking priority-based scheduling kernel 
+for embedded systems.
+
+Please see README.md for an overview.
+
+This is release 0.0.1 for Thursday afternoon, 14th June 2018.
+
+It's passed initial tests, but needs a good shakedown cruise.
+
+Alfred O Fingulin at FinguPublic@gmail.com
+
+*/

@@ -1,0 +1,12 @@
+/** \page TN06_BldAnExtCfg TechNote06: Building An ext Configuration
+
+The ext directory is home to board- or uP-specific code.
+It can be vendor-supplied, custom to Tr, or both.
+
+These should be built as seperate static libraries.
+
+The board or uP Design Notes describe how.  Read 'em.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

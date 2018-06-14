@@ -1,0 +1,41 @@
+/** \page Spec06_TaskEvents Spec06: Tasks And Events
+
+A Tr task can:
+
+\li pend for events from it's own event queue; it cannot get events from another task's event queue
+\li post events to another task's event queue; the target task ID specifies the target task's event queue.
+
+\section Spec06_EventCreation Task Event Queue Characteristics
+
+A task can have a event queue or not.
+When the task is elaborated, the event queue can have:
+
+\li zero entries; the task has no events
+\li non-zero quantity of entries 1..1024; the quantity of events in the queue
+
+Further: 
+
+\li the event payload is always 32 bits.
+\li queue ordering is always by priority of the sending task.
+
+Whenever an event is dequeued, the originator task ID is presented.
+
+\section Spec06_Operations Task Event Operations
+
+Pend extracts an event from the task's own event queue.
+If nothing is available, the task will be blocked until something becomes available and any other ready-to-run task will run.
+
+Grab is just like pend, but:
+
+\li if nothing is available, the task will regain control
+\li it will not be blocked and any other higher priority task will not be run.
+
+Post enqueues an event to a target task's event queue.
+If another task of higher priority is ready to run, then the sending task may be blocked.
+
+Stuff is just like post, but:
+it will not be blocked and any other higher priority task will not be run.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

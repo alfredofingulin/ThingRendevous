@@ -1,0 +1,26 @@
+/** \page uDN_ACM4_03_Trivia DesNote/ARM Cortex M4 03: Trivial Pursuit & ARM Core Cortex M4
+
+Some not obvious knowledge gained while writing the context switcher.
+
+\section uDN_ACM4_03_TskCrExEmul During context creation, while setting up registers on the stack to emulate an exception...
+
+~~ The xPSR register:
+
+\li must have bit 25 set; it says we're in Thumb mode to stay.
+Read and mask doesn't work 'cause it's read as zero.
+Set it by hand.
+\li clear the IT bits; dirty ones nail you to the Tree of Woe.
+
+~~ Any C-function-pointer/ThingRendevous-task-entry-address 
+must have bit 0 cleared, and then put on the context/stacked-PC.
+
+Context/exeception returns demand this.
+
+In GNU/ARM/C-land, any function pointer is returned with bit 0 set.
+That works for branch-link-xchange, but not for execption returns.
+
+~~ Stacked-LR can leave bit 0 set.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

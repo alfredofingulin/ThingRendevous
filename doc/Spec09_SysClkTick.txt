@@ -1,0 +1,23 @@
+/** \page Spec09_SysClkTick Spec09: System Clock Ticks
+
+Tr needs a system clock tick.
+
+Tr just counts ticks.  It doesn't care about duration.
+Time-of-day and date are not kept by Tr (but one of your tasks can).
+
+Tick periodicity, granularity, and accuracy is up to you.
+
+Tr's system clock tick interface is called by your application
+on every tick.
+
+Tr's clock is a counter:
+
+\li used exclusively for time-ing out system calls
+\li initialized to zero at start-up
+\li incremented as often as called.
+
+That's it.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

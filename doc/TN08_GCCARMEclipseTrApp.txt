@@ -1,0 +1,239 @@
+/** \page TN08_GCCARMEclipseTrApp TechNote08: Eclipse and GCC ARM: Tr App 
+
+Here's how to use Eclipse with the GCC ARM tools
+to build a Tr app.
+
+~~ 1.  To start an application project using Eclipse, create:
+
+\li a new C project
+\li one that is executable
+\li empty too
+\li a Cross GCC project.
+
+~~ 2.  As described in \link TN05_GCCARMEclipseTrLib \endlink fill in the:
+
+\li Cross compiler prefix
+\li Cross compiler path
+\li Basic architeture switches for Cortex M4 processor.
+
+~~ 3.  Add architecture switches for the Cortex M4 processor.  
+The toolset's readme file has that; here's more.
+
+~~ 3.1.  For the compiler, set the following using:
+
+\li Properties > C/C++ Build > Settings
+\li Tab Tool Settings > Cross GCC Compiler
+
+to add these switches to the Miscellaneous > Other Flags box:
+
+\li -mthumb -mcpu=cortex-m4
+
+~~ 3.2.  For the assembler, do the same:
+
+\li Properties > C/C++ Build > Settings
+\li Tab Tool Settings > Cross GCC Assembler
+
+to add these switches to the General > Assembler flags box:
+
+\li -mthumb -mcpu=cortex-m4
+
+~~ 4.  On your app's project, right-click for:
+
+\li Properties > C/C++ Build > Settings
+\li then choose Tool Settings tab > Cross GCC Compiler
+
+to add these directories to the Includes > Include paths (-l) list:
+
+\li tr/inc
+\li YourCPU/WhateverIncludePathsAreNeeded; check your target's design notes for details
+
+Be sure to use the workspace, not the filesystem.
+
+~~ 5.  Deal with trTi.c's include file needs.
+
+Your app will create trTi.c; 
+this contains all the tasks, events, messages, and streams in your system.
+However, this needs access to tr/src for include files.
+
+Right-click on trTi.c for:
+
+\li Properties > C/C++ Build > Settings
+\li then choose Tool Settings tab > Cross GCC Compiler
+
+to add these directories to the Includes > Include paths (-l) list:
+
+\li tr/src
+\li YourCPU/WhateverIncludePathsAreNeeded
+
+Be sure to use the workspace, not the filesystem.
+
+The full list for this file, and this file alone, will be:
+
+\li tr/src
+\li tr/inc
+\li YourCPU/WhateverIncludePathsAreNeeded
+
+Check your target's design notes for details
+
+~~ 6.  We've a lot to do with the linker; get ready!
+
+~~ 7.  Set up the linker switches.
+
+\li Properties > C/C++ Build > Settings
+\li Tab Tool Settings > Cross GCC Linker
+
+and add these switches to the Miscellaneous > Linker flags box:
+
+\li -mthumb -mcpu=cortex-m4
+
+~~ 8.  Specify the linker libraries for this build.
+
+\li choose Tool Settings tab > Cross GCC Linker
+
+Then, under General, check:
+
+\li No shared libraries (-static).
+
+And then, add this library to the Libraries > Libraries (-l) list:
+
+\li tr
+\li YourCPU
+
+These will be the archive file name without the lib prefix or .a suffix.
+
+And then, add this library path to the Libraries > Library search path (-L) list:
+
+\li tr/Debug
+\li YourCPU/Debug
+
+Or whatever the path is to the library in use.
+
+In all cases, use the workspace, not the file system.
+
+~~ 9.  Chose how to build the code: C/C++/bare-metal.
+
+What's done depends on 
+whether you're building bare-metal code, 
+retargeting standard IO on a bare-metal machine, 
+or writing real OO C++ code.
+
+\li Bare-metal with no standard IO, C-only, and never C++?  See 9.1.
+\li Retargeting standard IO or using C++?  See 9.2.
+
+~~ 9.1.  Turn-off the linker's desire to pull in startup code and default libraries.
+Here's why:
+
+\li Don't need the startup code; we've already got it
+\li The libraries will be specified in the linker directives script.
+
+Get to:
+
+\li Properties > C/C++ Build > Settings
+\li Tab Tool Settings > Cross GCC Linker
+
+select General and then
+
+\li check box No startup or default libs (-nostdlib).
+
+Skip 9.2 and proceed to 10.
+
+~~ 9.2.  The startup code is needed.  Turn-off the linker's desire to pull in default libraries;
+.
+Here's why:
+
+\li Supplied startup code does the vtable and standard IO inits needed
+\li The libraries are specified in the linker directives script.
+
+Get to:
+
+\li Properties > C/C++ Build > Settings
+\li Tab Tool Settings > Cross GCC Linker
+
+select General and then
+
+\li check box No default libs (-nodefaultlib).
+
+Proceed to 10.
+
+~~ 10.  Specify our own linker directive script, which maps code, data, and stack into FLASH and RAM.
+
+Get to:
+
+\li Properties > C/C++ Build > Settings
+\li Tab Tool Settings > Cross GCC Linker
+
+and add this line to the Miscellaneous > Linker flags box:
+
+\li -T"${workspace_loc:/YourCPU/gcc_YourCPU.ld}"
+
+That uses the linker's -T option to specify the custom linker directives script
+in a way Eclipse can understand.
+
+The entire Miscellaneous > Linker flags box should look like this:
+
+\li -mthumb -mcpu=cortex-m4 -T"${workspace_loc:/YourCPU/gcc_YourCPU.ld}"
+
+That "${..." thing
+is one of those pre-defined Eclipse environ variables.
+To see all of them:
+
+\li Properties > C/C++ Build > Build Variables
+\li check Show system variables.
+
+~~ 10.1.  (This is informational)  What about the 
+\htmlonly
+<a href="http://community.arm.com/groups/embedded/blog/2013/01/21/shrink-your-mcu-code-size-with-gcc-arm-embedded-47">ARM nano-libs?</a>
+\endhtmlonly
+
+Should one specify specs=specs.nano?
+
+No, because the linker directives file GROUP definition already does this.
+It specifies the nano-libs directly.
+
+~~ 11.  Produce a link map (handy for debugging).
+
+Finally use Miscellaneous under Other options (-Xlinker [option]):
+
+\li -cref
+\li -Map=${ProjName}.map
+
+to produce a symbol and memory info file.
+
+${ProjName} 
+is one of those pre-defined Eclipse environ variables.
+To see all in use:
+
+\li Properties > C/C++ Build > Build Variables
+\li check Show system variables.
+
+~~ 12.  Finally: Generate load-able output.
+
+S-records are preferred for programmers and debuggers.
+That takes some post-build work with Eclipse.
+
+~~ 12.1.  Select your app project and right-click for:
+
+\li Properties > C/C++ Build > Settings
+\li Tab Build Artifact
+
+Fill in the Artifact extension box with:
+
+\li elf
+
+This tags the executable with a .elf extension.
+
+~~ 12.2.  Change the artifact to binary image.  Go to:
+
+\li Tab Build Steps
+
+Fill in the Post-build steps > Command: box with
+
+\li arm-none-eabi-objcopy -O binary ${ProjName}.${BuildArtifactFileExt} ${ProjName}.bin
+
+Now a load image will come out.
+
+~~ 13.  That's it (for now) for your application.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

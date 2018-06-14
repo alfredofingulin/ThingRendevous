@@ -1,0 +1,88 @@
+/** \page TN09_AllAboutTrTasks TechNote09: All About Tr Tasks
+
+Tr tasks are static, as are each task's stream, message, and event schemes.  
+Tr tasks are not created or deleted at run-time.
+
+Tr tasks are coupled to the kernel thru a bunch of consts and data.
+The Tr kernel operates on that info.
+
+Trtgen, a tool to create this info, is run prior to build:
+\li It scans your application source to do it.
+\li Trtgen creates file trTi.c.
+\li This is part of your application build.
+
+That demands a series of conventions.  Here are the conventions.
+
+~~ Tasks must be named "void trTask_SomeName("
+
+~~ "#define trTask_SomeName_ID number" 
+defines the task ID number.
+Use this for communicating with other tasks.
+
+Not defining this is an error.
+
+~~ "#define trTask_SomeName_NominalPriority number" 
+defines the task's priority.
+
+If not defined, the task will get priority value 32767.
+
+~~ "#define trTask_SomeName_StackSize number" 
+is the number of bytes allocated to the task's stack.  
+
+Trtgen always forces the stack to be a multiple of eight bytes.
+If not defined, the task will get stack size 1024.
+
+~~ "#define trTask_SomeName_theTaskData ((void *) &someVariableInRAM)"
+is the parameter passed to the task at task start.
+The parentheses are required;
+someVariableInRAM must compile;
+if not, Strange And Wonderous Things will happen.
+
+If not defined, the task will get parameter NULL.
+
+It is your responsibility to initialize someVariableInRAM at system start.
+
+~~ "#define trTask_SomeName_StrmLen number"
+is the task's stream buffer in bytes. 
+
+Trtgen always forces the stream length to be a multiple of eight bytes.
+If not defined, the stream will be zero; no stream.
+
+~~ "#define trTask_SomeName_MsgLen number"
+is the task's message buffer in number of messages (not payload bytes).
+
+Message queue length has no forced value; it's 0, 1, 2... whatever.
+If not defined, the message length will be 0; no messages.
+
+~~ "#define trTask_SomeName_MsgOrdering number"
+sets the message ordering scheme.
+
+It is valid only if _MsgLen is non-zero.
+
+If 0, the messages are ordered FIFO.
+If 1, the messages are ordered by priority of the sending task;
+tasks with higher priority get preference in the message queue.
+
+If not defined, any other value, or _MsgLen is zero, then 0 is assumed.
+
+~~ "#define trTask_SomeName_MsgPayload number"
+is the task's message buffer payload length in bytes.
+
+It is valid only if _MsgLen is non-zero.
+If _MsgLen is non-zero, the the allowed values are 8, 16, 24, or 32.
+
+If undefined or another value is used, then 44 will be used
+("Mom!  I got dubs!").
+
+If _MsgLen is zero, then 0 will be used.
+
+~~ "#define trTask_SomeName_EvtLen number"
+is the task's event buffer in number of 32-bit events.
+
+Event queue length has no forced value; it's 0, 1, 2... whatever.
+If not defined, the event length will be 0; no events.
+
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

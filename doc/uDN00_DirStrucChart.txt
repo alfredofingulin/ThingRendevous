@@ -1,0 +1,138 @@
+/** 
+\page uDN00_DirStrucChart DesNote00: A Directory And Module Structure Chart
+
+This'll help you navigate the files.
+
+\code
+/*
+
+YourApp/
+
+   -- Trtgen.py generates everyting about your app's
+   -- tasks, streams, events, messages.
+   
+   |- trTi.c
+
+tr/
+
+   -- ThingRendevous' home.
+   
+   |- mainpage.txt
+   |- readme.txt
+   |- doxygen config file Doxyfile.
+   
+   inc/
+   
+      -- Include files used by your application.
+         This should be in your application's include file path.
+      
+      |- trAPI.h
+      |- trAPIRet.h
+      |- trAPIEI.h
+         
+   src/
+   
+      -- Tr's source code and privately used include files.
+      
+      |- tr*.h
+      |- tr*.c
+      
+      -- Begins with the API.
+      
+      |- trAPI.c
+      
+         -- Kernel interface data structures
+         
+         |- trKIDS
+         
+         -- The kernel handler finder.
+         
+         |- trKhf
+      
+         -- There's the actual tasks for kernel ops.
+         
+         |- trTei; explicit interrupt
+         |- trTti; tr task itself
+         
+            -- Defines every task, stream, event, message in the system
+            -- Implementation is in YourApp
+            
+            |- trTi.h
+            
+            -- Kernel handlers themselves.
+            
+            |- trEvt
+               |- trEvtP
+               
+            |- trMsg
+               |- trMsgP
+               
+            |- trStrm
+               |- trStrmP
+               
+            |- trT
+               |- trTP
+               
+            |- trSClk
+               -- Doesn't have trSClkP 'cause it's short and stupid.
+               
+            |- trStart
+               
+            -- These conspire to manage context state.
+
+            |- trSR
+            |- trTS
+            |- trTstc
+               -- Doesn't have trTstcP 'cause it's short and stupid.
+      
+      -- Some things are used all over the place.
+      
+      |- trB; boundaries
+      |- trBidt; binary ID tree
+      |- trM; misc stuff
+      |- trPl; priority lists
+      
+      -- The thing to handle context switching and private sections.
+      -- Peculiar to the ARM Cortex M4.
+      
+      |- truPACM4
+      
+   ext/
+   
+      -- uP-specific code.
+      -- External stuff, from other places, copied and modified for Tr.
+      -- Pick one and only of these to use for your target.
+      -- In most cases, src/.h has a corresponding ext/uP-specific/.c file here.
+      
+      |- FRDMK20D50M; Kinetis K20 uP
+      |- simulator; Linux hosted simulator
+      |- STM32F429Nucleo144; obvious
+      
+   test/
+   
+      -- Test code, segregated by target just like ext.
+      -- Useful for test; not part of you executable.
+      
+   doc/
+   
+      -- Tr's plain text documentation; it's also Doxygen source.
+      
+      |- Spec*.txt; the requirements spec for Tr
+      |- TN*.txt; technical notes common to all Tr configs
+      |- uDN*.txt; design notes and insights about Tr internals
+      
+   tool/
+
+      -- Scripts-n-stuff for Tr.
+      
+   html/
+
+      -- Where doxygen dumps all the browse-able code and doc webpages;
+         point your browser to tr/html/index.html.
+      
+*/
+\endcode
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

@@ -1,0 +1,49 @@
+/** \page Spec11_VersionNumbers Spec11: Version Numbering
+
+Tr uses the form:
+
+\code
+/*
+Major.Minor.BuildFix[-rcX]
+*/
+\endcode
+
+where:
+
+\li Major indicates a milestone or change in behavior and/or internal design.
+\li Minor indicates support additions (new micros and so on), refinement, or refactoring.
+\li BuildFix indicates indicates a new build or bug fix.
+\li optional -rcX, where -rc is "release candidate" and X is a sequentially increasing number.  Major.Minor.BuildFix reflects the baseline used for -rcX.
+
+The date is usually included, but is not necessary.  Dates are always
+of the form:
+
+\code
+/*
+DayOfTheWeek [period of the day], DD Month Year
+*/
+\endcode
+
+all of which are fully spelled-out.
+
+We try to use the metric system.
+
+It's helpful to know another language other than one's mother-tongue.
+
+Bullet and cartridge are two different things.
+Calibers are whatever the originator desired, English or metric.
+Ditto for cartridge dimensions.  
+Powder charges are still grains, tho.
+
+Magazines and clips are two different things;
+confusing the two annoys me to no end.
+
+Let folks know if the meat is pork.  
+Don't use suet when preparing vegatarian dishes.  
+Always order at least one all-veggie pizza.
+
+Divide by zero is undefined; it's not really infinity.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

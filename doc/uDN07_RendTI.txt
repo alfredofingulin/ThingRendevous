@@ -1,0 +1,205 @@
+/** \page uDN07_RendTI DesNote07: Rendezvous With Tr Itself
+
+The Tr itself rendezvous enters:
+
+\li on any Tr API request
+\li if running as an explicit interrupt, then Tr need do nothing special; it's got its own thread
+\li if the first entry as tr itself, switches to tr itself's own stack
+\li on nested tr itself entries, does nothing special; it's already tr itself.
+
+Tr is running on it's own stack, accepting API requests.
+
+The Tr itself rendezvous leaves:
+
+\li on Tr API request completion
+\li on nested tr itself entries, does nothing special; it's already tr itself
+\li if the last leave as tr itself, may reschedule and switch to a new task
+\li if running as an explicit interrupt, let's explicit interrupt task reschedule.
+
+There's one copy of tr,
+and it's shared by explicit interrupts and tr itself.
+
+Tr must be aware of explicit interrupts.
+
+To keep track of tr itself nesting, use a light-weight counting semaphore.
+
+Further: some Tr APIs:
+
+\li do not require context switches; status' are good examples
+\li do not pre-empt and always return to the caller.
+
+\code
+/*
+
+Tr Itself Enter:
+
+   RunOn      |   ExIntr     |   TrItself   ||
+   Caller     |   Nest       |   Nest       ||   Actions
+==============+==============+==============++=============
+  T           |  X           |  X           ||  - Context irrelevant; can use
+              |              |              ||  user, tr itself, or explicit interrupt.
+              |              |              ||  - Don't change TrItselfNest.
+              |              |              ||  - Use present stack,
+              |              |              ||  perform Tr API request.
+--------------+--------------+--------------++-------------
+  F           |  0           |  0           ||  - Switch from user context
+              |              |              ||  to tr itself context.
+              |              |              ||  - Incr TrItselfNest;
+              |              |              ||  it will be 1.
+              |              |              ||  - Using Tr stack,
+              |              |              ||  perform Tr API request.
+--------------+--------------+--------------++-------------
+  F           |  0           |  > 0         ||  - Present context is tr itself;
+              |              |              ||  stay in it.
+              |              |              ||  - Incr TrItselfNest;
+              |              |              ||  it will be > 1.
+              |              |              ||  - Using the present stack,
+              |              |              ||  which is tr's,
+              |              |              ||  perform Tr API request.
+--------------+--------------+--------------++-------------
+  F           |  > 0         |  0           ||  - Present context is explicit interrupt;
+              |              |              ||  stay in it.
+              |              |              ||  - Incr TrItselfNest;
+              |              |              ||  it will be 1.
+              |              |              ||  - Using the present stack,
+              |              |              ||  which is explicit interrupt's,
+              |              |              ||  perform Tr API request.
+--------------+--------------+--------------++-------------
+  F           |  > 0         |  > 0         ||  - Present context is 
+              |              |              ||  explicit interrupt
+              |              |              ||  or tr itself;
+              |              |              ||  doesn't matter: stay in it.
+              |              |              ||  - Incr TrItselfNest;
+              |              |              ||  it will be > 1.
+              |              |              ||  - Using the present stack,
+              |              |              ||  whichever it is,
+              |              |              ||  perform Tr API request.
+==============+==============+==============++=============
+
+On Tr Itself Enter API requests the DontPreEmpt is irrelevent.
+
+
+Tr Itself Leave:
+
+   RunOn      |   ExIntr     |   TrItself   |   Dont       ||
+   Caller     |   Nest       |   Nest       |   PreEmpt    ||   Actions
+==============+==============+==============+==============++=============
+  T           |  X           |  X           |  X           ||  - Context irrelevant; can use
+              |              |              |              ||  user, tr itself, or explicit interrupt.
+              |              |              |              ||  - Don't change TrItselfNest.
+              |              |              |              ||  - Use present stack,
+              |              |              |              ||  back to the caller.
+--------------+--------------+--------------+--------------++-------------
+  F           |  0           |  1           |  F           ||  - Switch from Tr itself context
+              |              |              |              ||  to most urgent task user context.
+              |              |              |              ||  - Decr TrItselfNest;
+              |              |              |              ||  it will be 0.
+              |              |              |              ||  - Select most urgent task.
+              |              |              |              ||  - Restore that task's
+              |              |              |              ||  user context
+              |              |              |              ||  and set it a-running.
+--------------+--------------+--------------+--------------++-------------
+  F           |  0           |  > 1         |  F           ||  - Present context is tr itself;
+              |              |              |              ||  stay in it.
+              |              |              |              ||  - Decr TrItselfNest;
+              |              |              |              ||  it will be >= 1.
+              |              |              |              ||  - Using the present stack,
+              |              |              |              ||  which is tr's,
+              |              |              |              ||  return to caller Tr.
+              |              |              |              ||  - PreEmpt got nothing
+              |              |              |              ||  to do with this.
+--------------+--------------+--------------+--------------++-------------
+  F           |  0           |  1           |  T           ||  - Switch from Tr itself context
+              |              |              |              ||  to requester's task user context.
+              |              |              |              ||  - Decr TrItselfNest;
+              |              |              |              ||  it will be 0.
+              |              |              |              ||  - Do not select another task.
+              |              |              |              ||  - Restore the request's
+              |              |              |              ||  user task context
+              |              |              |              ||  and set it a-running.
+--------------+--------------+--------------+--------------++-------------
+  F           |  0           |  > 1         |  T           ||  - Present context is tr itself;
+              |              |              |              ||  stay in it.
+              |              |              |              ||  - Decr TrItselfNest;
+              |              |              |              ||  it will be >= 1.
+              |              |              |              ||  - Using the present stack,
+              |              |              |              ||  which is tr's,
+              |              |              |              ||  return to caller Tr.
+              |              |              |              ||  - PreEmpt got nothing
+              |              |              |              ||  to do with this.
+              |              |              |              ||  ! Effectively identical: 
+              |              |              |              ||  F / 0 / > 1 / F
+--------------+--------------+--------------+--------------++-------------
+  F           |  1           |  1           |  F           ||  - Present context is 
+              |              |              |              ||  explicit interrupt;
+              |              |              |              ||  stay in it.
+              |              |              |              ||  - Decr TrItselfNest;
+              |              |              |              ||  it will be 0.
+              |              |              |              ||  - Using the present stack,
+              |              |              |              ||  which is explicit interrupt's,
+              |              |              |              ||  return to explicit interrupt.
+              |              |              |              ||  - PreEmpt got nothing
+              |              |              |              ||  to do with this,
+              |              |              |              ||  pre-empt forced
+              |              |              |              ||  by leaving
+              |              |              |              ||  explicit interrupt.
+--------------+--------------+--------------+--------------++-------------
+  F           |  1           |  > 1         |  F           ||  - Present context is 
+              |              |              |              ||  explicit interrupt;
+              |              |              |              ||  stay in it.
+              |              |              |              ||  - Decr TrItselfNest;
+              |              |              |              ||  it will be >= 1.
+              |              |              |              ||  - Unwinding
+              |              |              |              ||  nested Tr calls.
+              |              |              |              ||  - Using the present stack,
+              |              |              |              ||  which is explicit interrupt's,
+              |              |              |              ||  return to explicit interrupt.
+              |              |              |              ||  - PreEmpt got nothing
+              |              |              |              ||  to do with this,
+              |              |              |              ||  pre-empt forced
+              |              |              |              ||  by leaving
+              |              |              |              ||  explicit interrupt.
+              |              |              |              ||  ! Effectively identical: 
+              |              |              |              ||  F / 1 / 1 / F
+--------------+--------------+--------------+--------------++-------------
+  F           |  > 1         |  1           |  T           ||  - Present context is 
+              |              |              |              ||  nested explicit interrupt;
+              |              |              |              ||  stay in it.
+              |              |              |              ||  - Decr TrItselfNest;
+              |              |              |              ||  it will be 0.
+              |              |              |              ||  - Using the present stack,
+              |              |              |              ||  which is explicit interrupt's,
+              |              |              |              ||  return to explicit interrupt.
+              |              |              |              ||  - PreEmpt got nothing
+              |              |              |              ||  to do with this,
+              |              |              |              ||  pre-empt forced
+              |              |              |              ||  by unnested leaving
+              |              |              |              ||  explicit interrupt.
+              |              |              |              ||  ! Effectively identical: 
+              |              |              |              ||  F / 1 / 1 / F
+--------------+--------------+--------------+--------------++-------------
+  F           |  > 1         |  > 1         |  T           ||  - Present context is 
+              |              |              |              ||  nested explicit interrupt;
+              |              |              |              ||  stay in it.
+              |              |              |              ||  - Decr TrItselfNest;
+              |              |              |              ||  it will be >= 1.
+              |              |              |              ||  - Unwinding
+              |              |              |              ||  nested Tr calls.
+              |              |              |              ||  - Using the present stack,
+              |              |              |              ||  which is explicit interrupt's,
+              |              |              |              ||  return to explicit interrupt.
+              |              |              |              ||  - PreEmpt got nothing
+              |              |              |              ||  to do with this,
+              |              |              |              ||  pre-empt forced
+              |              |              |              ||  by unnested leaving
+              |              |              |              ||  explicit interrupt.
+              |              |              |              ||  ! Effectively identical: 
+              |              |              |              ||  F / 1 / 1 / F
+==============+==============+==============+==============++=============
+                
+*/
+\endcode
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

@@ -1,0 +1,49 @@
+/** \page Spec04_TaskStreams Spec04: Tasks And Streams
+
+A Tr task can:
+
+\li read from it's own input stream; it cannot read from another task's stream
+\li write to another task's input stream; the target task ID specifies the target task's stream.
+
+\section Spec04_StreamCreation Task Steam Characteristics
+
+A task can have a stream or not.
+When the task is elaborated, the steam can be:
+
+\li zero; the task has no stream
+\li non-zero value 8, 16,..0xFFF0 bytes; the task's steam length; it must be multiple of 8 bytes.
+
+And it is a stream:
+data origin is not indicated in the stream.
+
+\section Spec04_StreamsRBytes Streams Are Just Bytes, FIFO
+
+'Nuff said.
+
+\section Spec04_Operations Task Stream Operations
+
+Read:
+
+\li reads from the task's own stream
+\li can specify a minimum and maximum number of bytes to read
+\li if nothing is available, the task will be blocked until something becomes available and any other ready-to-run task will run.
+
+Get is just like read, but:
+
+\li if nothing is available, the task will regain control 
+\li it will not be blocked and any other higher priority task will not be run.
+
+Write:
+
+\li writes to a target task's stream
+\li can specify a minimum and maximum number of bytes to write
+\li if another task of higher priority is ready to run, then the writing task may be blocked.
+
+Put is just like write, but:
+
+\li the writing task will regain control; 
+\li it will not be blocked and any other higher priority task will not be run.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

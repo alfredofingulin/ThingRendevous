@@ -1,0 +1,70 @@
+/** \page uDN06_RendEI DesNote06: Rendezvous With Explicit Interrupts
+
+The explicit interrupt rendezvous enters on:
+
+\li an explicit interrupt
+\li the first entry, switches to an explicit interrupt stack
+\li nested entries, does nothing special; it's already an explicit interrupt.
+
+The usual Tr API requests are allowed.
+An explicit interrupt is a copy of Tr running on an explicit interrupt stack.
+
+The explicit interrupt rendezvous leaves on:
+
+\li nested leaves, does nothing special; it's already an explicit interrupt.
+\li the last leave, may reschedule and switch to a new task
+\li leave to the explicit interrupt or another task.
+
+Tr itself task is another task running on another stack.
+Tr itself becomes an interruptable task, subject to the usual rules.
+
+Both copies of tr must be aware of explicit interrupts.
+
+To keep track of explicit interrupt nesting, use a light-weight counting semaphore.
+
+\code
+/*
+
+Explicit Interrupt Enter:
+
+   ExIntr   ||
+   Nest     ||   Actions
+============++=============
+  0         ||  Save calling task context.
+            ||  Switch to explicit interrupt context.
+            ||  Increment nesting.
+            ||  Back to the interrupt handler.
+            ||  Explicit interrupt task is running.
+------------++-------------
+  > 0       ||  Already running as explicit interrupt.
+            ||  Increment nesting.
+            ||  Back to the interrupt handler.
+------------++-------------
+  max       ||  An error (whatever max is).
+============++=============
+            
+
+Explicit Interrupt Leave:
+
+   ExIntr   ||
+   Nest     ||   Actions
+============++=============
+  > 1       ||  Already running as explicit interrupt.
+            ||  Decrement nesting.
+            ||  Back to the interrupt handler.
+------------++-------------
+  1         ||  Throw away explicit interrupt context.
+            ||  Restore highest priority task context.
+            ||  Decrement nesting.
+            ||  Back to the task.
+            ||  Another task is running.
+------------++-------------
+  0         ||  An error.
+============++=============
+                
+*/
+\endcode
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/

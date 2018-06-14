@@ -1,0 +1,10 @@
+/** \page uDN_STM32F429_WhatsThis DesNote/STM32F4xx 00: What's This?
+
+Anything with this title is the home to STM32F4xx uP
+trivia, cheat-sheets, and other-such.
+
+In particular, the STM32F429ZI on the Nucleo144 board.
+
+*
+* \author Alfred O Fingulin FinguPublic@gmail.com
+*/
